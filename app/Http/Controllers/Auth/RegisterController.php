@@ -3,10 +3,13 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\Course;
+use App\Models\SchoolClass;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\Rule;
 use Illuminate\View\View;
 
 class RegisterController extends Controller
@@ -14,7 +17,13 @@ class RegisterController extends Controller
     // Show the registration form.
     public function create(): View
     {
-        return view('auth.register');
+        return view('auth.register', [
+            'courses' => Course::where('is_active', true)->orderBy('name')->get(),
+            'schoolClasses' => SchoolClass::where('is_active', true)
+                ->orderBy('grade_level')
+                ->orderBy('name')
+                ->get(),
+        ]);
     }
 
     // Validate the form, create the account, and log the new user in.
@@ -37,6 +46,14 @@ class RegisterController extends Controller
                 // /i    ignore uppercase/lowercase
             ],
             'password' => ['required', 'confirmed', 'min:5'],
+            'course_id' => [
+                'required',
+                Rule::exists('courses', 'id')->where('is_active', true),
+            ],
+            'school_class_id' => [
+                'required',
+                Rule::exists('school_classes', 'id')->where('is_active', true),
+            ],
         ], [
             'email.regex' => 'Please use your correct school email.',
         ]);

@@ -1,0 +1,462 @@
+:root {
+    --sidebar-width: 235px;
+    --black: #1d1d1d;
+    --grey: #6d6d6d;
+    --line: #e3e3df;
+    --paper: #ffffff;
+    --sidebar: #f7f7f5;
+    --hover: #eeeeeb;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--black);
+    font-family: "Chelsea Market", system-ui;
+}
+
+.app-layout {
+    min-height: 100vh;
+}
+
+/* The sidebar stays visible while the page content scrolls. */
+.sidebar {
+    position: fixed;
+    inset: 0 auto 0 0;
+    display: flex;
+    flex-direction: column;
+    width: var(--sidebar-width);
+    padding: 14px;
+    background: var(--sidebar);
+    border-right: 1px solid var(--line);
+}
+
+.sidebar-brand {
+    display: flex;
+    gap: 9px;
+    align-items: center;
+    color: var(--black);
+    font-family: "Chelsea Market", system-ui;
+    font-size: 22px;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.sidebar-brand span {
+    display: grid;
+    place-items: center;
+    width: 28px;
+    height: 28px;
+    background: var(--black);
+    color: white;
+    border-radius: 6px;
+    font-size: 14px;
+}
+
+.user-box {
+    display: grid;
+    gap: 4px;
+    margin: 22px 0;
+    padding: 11px;
+    background: white;
+    border: 1px solid var(--line);
+    border-radius: 7px;
+}
+
+.user-box strong {
+    font-size: 12px;
+}
+
+.user-box small {
+    overflow: hidden;
+    color: var(--grey);
+    font-size: 10px;
+    text-overflow: ellipsis;
+}
+
+.sidebar-links {
+    display: grid;
+    gap: 3px;
+}
+
+.sidebar-links p {
+    margin: 4px 8px 7px;
+    color: #999999;
+    font-size: 9px;
+    font-weight: bold;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+}
+
+.sidebar a,
+.sidebar button {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    width: 100%;
+    min-height: 36px;
+    padding: 8px 9px;
+    background: transparent;
+    border: 0;
+    border-radius: 6px;
+    color: #555555;
+    font: inherit;
+    font-size: 12px;
+    text-align: left;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.sidebar a:hover,
+.sidebar button:hover,
+.sidebar a.active {
+    background: var(--hover);
+    color: var(--black);
+}
+
+.sidebar a span,
+.sidebar button span {
+    display: grid;
+    width: 18px;
+    place-items: center;
+    font-size: 15px;
+}
+
+.sidebar-bottom {
+    display: grid;
+    gap: 3px;
+    margin-top: auto;
+    padding-top: 12px;
+    border-top: 1px solid var(--line);
+}
+
+.sidebar-bottom form {
+    margin: 0;
+}
+
+.page-content {
+    min-height: 100vh;
+    margin-left: var(--sidebar-width);
+    padding: clamp(32px, 6vw, 75px);
+}
+
+.page-heading {
+    max-width: 760px;
+    margin-bottom: 42px;
+}
+
+.page-heading p {
+    margin: 0 0 10px;
+    color: var(--grey);
+    font-size: 10px;
+    font-weight: bold;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+}
+
+.page-heading h1 {
+    margin: 0 0 12px;
+    font-family: "Chelsea Market", system-ui;
+    font-size: clamp(38px, 6vw, 62px);
+    font-weight: normal;
+}
+
+.page-heading span,
+.dashboard-card p,
+.empty-card p {
+    color: var(--grey);
+    font-size: 13px;
+    line-height: 1.6;
+}
+
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 15px;
+}
+
+.dashboard-card,
+.empty-card {
+    padding: 25px;
+    background: white;
+    border: 1px solid var(--line);
+    border-radius: 9px;
+}
+
+.dashboard-card {
+    color: var(--black);
+    text-decoration: none;
+    transition:
+        transform 150ms ease,
+        border-color 150ms ease;
+}
+
+.dashboard-card:hover {
+    border-color: #b5b5b0;
+    transform: translateY(-2px);
+}
+
+.dashboard-card > span {
+    font-size: 22px;
+}
+
+.dashboard-card h2 {
+    margin: 30px 0 7px;
+    font-size: 16px;
+}
+
+.dashboard-card p,
+.empty-card p {
+    margin: 0;
+}
+
+.empty-card {
+    max-width: 760px;
+}
+
+.empty-card strong {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 15px;
+}
+
+.success-message,
+.error-box {
+    max-width: 760px;
+    margin: 0 0 18px;
+    padding: 13px 15px;
+    border-radius: 8px;
+    font-size: 13px;
+}
+
+.success-message {
+    background: #eef8ef;
+    border: 1px solid #cfe8d1;
+    color: #235d2b;
+}
+
+.error-box {
+    background: #fff0f0;
+    border: 1px solid #efcccc;
+    color: #8b2424;
+}
+
+.error-box p {
+    margin: 0;
+}
+
+.form-card,
+.task-list-card {
+    padding: 25px;
+    background: white;
+    border: 1px solid var(--line);
+    border-radius: 9px;
+}
+
+.form-card {
+    max-width: 620px;
+}
+
+.form-card form,
+.task-row details form {
+    display: grid;
+}
+
+.form-card label,
+.task-row details label {
+    margin: 16px 0 7px;
+    color: var(--black);
+    font-size: 12px;
+}
+
+.form-card input,
+.form-card select,
+.task-row input {
+    width: 100%;
+    padding: 11px;
+    background: white;
+    border: 1px solid #c9c9c5;
+    border-radius: 7px;
+    color: var(--black);
+    font: inherit;
+}
+
+.form-card input:disabled {
+    background: #f2f2ef;
+    color: #777777;
+}
+
+.form-card button,
+.task-row button {
+    width: fit-content;
+    margin-top: 18px;
+    padding: 10px 15px;
+    background: var(--black);
+    color: white;
+    border: 1px solid var(--black);
+    border-radius: 7px;
+    font: inherit;
+    cursor: pointer;
+}
+
+.small-link {
+    margin: 18px 0 0;
+    color: var(--grey);
+    font-size: 12px;
+    line-height: 1.6;
+}
+
+.small-link a {
+    color: var(--black);
+}
+
+.tasks-layout {
+    display: grid;
+    grid-template-columns: minmax(260px, 360px) minmax(0, 1fr);
+    gap: 18px;
+    align-items: start;
+}
+
+.date-form {
+    margin-bottom: 22px;
+    padding-bottom: 22px;
+    border-bottom: 1px solid var(--line);
+}
+
+.task-list-card {
+    max-width: 760px;
+}
+
+.task-list-card h2 {
+    margin: 0 0 18px;
+    font-size: 20px;
+}
+
+.task-row {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    gap: 12px;
+    align-items: start;
+    padding: 14px 0;
+    border-top: 1px solid var(--line);
+}
+
+.task-row:first-of-type {
+    border-top: 0;
+}
+
+.task-row form {
+    margin: 0;
+}
+
+.task-row small {
+    display: block;
+    margin-top: 4px;
+    color: var(--grey);
+    font-size: 11px;
+}
+
+.task-row.completed strong {
+    color: var(--grey);
+    text-decoration: line-through;
+}
+
+.task-check {
+    display: grid;
+    place-items: center;
+    width: 28px;
+    height: 28px;
+    margin: 0;
+    padding: 0;
+    background: white;
+    color: var(--black);
+    border: 1px solid #b8b8b3;
+}
+
+.task-row details {
+    min-width: 150px;
+}
+
+.task-row summary {
+    cursor: pointer;
+    color: var(--grey);
+    font-size: 12px;
+}
+
+.task-row details form {
+    gap: 8px;
+    margin-top: 12px;
+}
+
+.task-row details button {
+    margin-top: 4px;
+}
+
+.task-row .danger-button {
+    background: white;
+    color: #8b2424;
+    border-color: #efcccc;
+}
+
+.empty-message {
+    margin: 0;
+    color: var(--grey);
+    font-size: 13px;
+}
+
+@media (max-width: 800px) {
+    .sidebar {
+        position: static;
+        width: 100%;
+        border-right: 0;
+        border-bottom: 1px solid var(--line);
+    }
+
+    .user-box {
+        margin: 15px 0;
+    }
+
+    .sidebar-links {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .sidebar-links p {
+        grid-column: 1 / -1;
+    }
+
+    .sidebar-bottom {
+        grid-template-columns: 1fr 1fr;
+        margin-top: 12px;
+    }
+
+    .page-content {
+        margin-left: 0;
+        padding: 32px 20px;
+    }
+
+    .dashboard-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .tasks-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .task-row {
+        grid-template-columns: auto 1fr;
+    }
+
+    .task-row details {
+        grid-column: 2;
+    }
+}
+
+@media (max-width: 520px) {
+    .sidebar-links {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}

@@ -3,6 +3,8 @@
 namespace Tests\Feature;
 
 use App\Models\User;
+use App\Models\Course;
+use App\Models\SchoolClass;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -12,16 +14,25 @@ class AuthenticationTest extends TestCase
 
     public function test_a_student_can_register_with_a_school_email(): void
     {
+        $course = Course::create(['name' => 'Science and Technology', 'is_active' => true]);
+        $schoolClass = SchoolClass::create(['name' => '10.1', 'grade_level' => 10, 'is_active' => true]);
+
         $response = $this->post(route('register.store'), [
             'name' => 'Maria Student',
             'email' => 'a28171@alunos.ael.edu.pt',
             'password' => 'password123',
             'password_confirmation' => 'password123',
+            'course_id' => $course->id,
+            'school_class_id' => $schoolClass->id,
         ]);
 
         $response->assertRedirect(route('dashboard'));
         $this->assertAuthenticated();
-        $this->assertDatabaseHas('users', ['email' => 'a28171@ael.edu.pt']);
+        $this->assertDatabaseHas('users', [
+            'email' => 'a28171@alunos.ael.edu.pt',
+            'course_id' => $course->id,
+            'school_class_id' => $schoolClass->id,
+        ]);
     }
 
     public function test_registration_rejects_a_non_school_email(): void
@@ -31,6 +42,8 @@ class AuthenticationTest extends TestCase
             'email' => 'maria@gmail.com',
             'password' => 'password123',
             'password_confirmation' => 'password123',
+            'course_id' => 1,
+            'school_class_id' => 1,
         ])->assertSessionHasErrors('email');
 
         $this->assertGuest();
@@ -58,6 +71,7 @@ class AuthenticationTest extends TestCase
         $this->actingAs(User::factory()->create())
             ->get(route('dashboard'))
             ->assertOk()
-            ->assertSee('Protected page');
+            ->assertSee('Kuri navigation')
+            ->assertSee('This is your private Kuri workspace.');
     }
 }

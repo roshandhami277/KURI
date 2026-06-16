@@ -6,12 +6,14 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Kuri</title>
     <link rel="stylesheet" href="{{ asset('css/auth.css') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Chelsea+Market&display=swap" rel="stylesheet">
 </head>
 <body>
     {{-- Top navigation --}}
     <header class="site-header">
         <a class="brand" href="#home" aria-label="Kuri home">
-            <span class="brand-mark">K</span>
             <span>Kuri</span>
         </a>
 
@@ -28,7 +30,7 @@
     <main class="dashboard-page">
         <p class="eyebrow">A school workspace</p>
         <h1>Kuri</h1>
-        <p class="introduction">Organise your school work in one simple place.</p>
+        <p class="introduction">Organize everything in one simple place.</p>
     </main>
 </body>
 </html>
