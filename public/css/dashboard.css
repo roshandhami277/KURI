@@ -314,98 +314,90 @@ body {
     color: var(--black);
 }
 
-.tasks-layout {
-    display: grid;
-    grid-template-columns: minmax(260px, 360px) minmax(0, 1fr);
-    gap: 18px;
-    align-items: start;
+.single-todo-card {
+    width: min(560px, 100%);
+    padding: 22px;
+    background: white;
+    border: 1px solid var(--line);
+    border-radius: 12px;
 }
 
-.date-form {
-    margin-bottom: 22px;
-    padding-bottom: 22px;
-    border-bottom: 1px solid var(--line);
-}
-
-.task-list-card {
-    max-width: 760px;
-}
-
-.task-list-card h2 {
-    margin: 0 0 18px;
+.single-todo-card h2 {
+    margin: 0 0 16px;
     font-size: 20px;
+    font-weight: normal;
 }
 
-.task-row {
+.single-todo-card form {
     display: grid;
-    grid-template-columns: auto 1fr auto;
-    gap: 12px;
-    align-items: start;
-    padding: 14px 0;
-    border-top: 1px solid var(--line);
+    gap: 6px;
 }
 
-.task-row:first-of-type {
-    border-top: 0;
+.todo-lines {
+    display: grid;
+    gap: 6px;
 }
 
-.task-row form {
-    margin: 0;
+.todo-line {
+    display: grid;
+    grid-template-columns: 18px 1fr;
+    gap: 10px;
+    align-items: center;
+    min-height: 34px;
+    padding: 4px;
+    border-radius: 7px;
 }
 
-.task-row small {
+.todo-line:focus-within {
+    background: #f7f7f5;
+}
+
+.writing-line {
     display: block;
-    margin-top: 4px;
-    color: var(--grey);
-    font-size: 11px;
+    min-height: 36px;
+    padding: 6px 4px 6px 28px;
+    border-radius: 7px;
 }
 
-.task-row.completed strong {
+.writing-line:focus-within {
+    background: #f7f7f5;
+}
+
+.todo-line input[type="checkbox"] {
+    width: 15px;
+    height: 15px;
+    accent-color: var(--black);
+}
+
+.todo-line span,
+.todo-line input[type="text"] {
+    width: 100%;
+    background: transparent;
+    border: 0;
+    color: var(--black);
+    font: inherit;
+    font-size: 13px;
+    outline: 0;
+}
+
+.todo-line span {
+    font-size: 13px;
+}
+
+.writing-line input {
+    width: 100%;
+    background: transparent;
+    border: 0;
+    color: var(--black);
+    font: inherit;
+    font-size: 13px;
+    outline: 0;
+}
+
+.todo-line input[type="checkbox"]:checked + span,
+.todo-line input[type="checkbox"]:checked + input[type="text"] {
     color: var(--grey);
     text-decoration: line-through;
-}
-
-.task-check {
-    display: grid;
-    place-items: center;
-    width: 28px;
-    height: 28px;
-    margin: 0;
-    padding: 0;
-    background: white;
-    color: var(--black);
-    border: 1px solid #b8b8b3;
-}
-
-.task-row details {
-    min-width: 150px;
-}
-
-.task-row summary {
-    cursor: pointer;
-    color: var(--grey);
-    font-size: 12px;
-}
-
-.task-row details form {
-    gap: 8px;
-    margin-top: 12px;
-}
-
-.task-row details button {
-    margin-top: 4px;
-}
-
-.task-row .danger-button {
-    background: white;
-    color: #8b2424;
-    border-color: #efcccc;
-}
-
-.empty-message {
-    margin: 0;
-    color: var(--grey);
-    font-size: 13px;
 }
 
 @media (max-width: 800px) {
@@ -442,16 +434,9 @@ body {
         grid-template-columns: 1fr;
     }
 
-    .tasks-layout {
-        grid-template-columns: 1fr;
-    }
-
-    .task-row {
-        grid-template-columns: auto 1fr;
-    }
-
-    .task-row details {
-        grid-column: 2;
+    .single-todo-card {
+        width: 100% !important;
+        padding: 20px;
     }
 }
 

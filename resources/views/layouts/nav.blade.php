@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('title') | Kuri</title>
     <link rel="stylesheet" href="{{ asset('css/dashboard.css') }}">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -12,7 +13,7 @@
 </head>
 <body>
     <div class="navigation-layout">
-        {{-- This sidebar is shared by every protected Kuri page. --}}
+        {{-- This sidebar is shared by every Kuri page --}}
         <aside class="sidebar">
             <a class="sidebar-brand" href="{{ route('dashboard') }}">
                 <span>K</span>

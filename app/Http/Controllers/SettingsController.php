@@ -19,12 +19,21 @@ class SettingsController extends Controller
     {
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:100'],
+            'password' => ['nullable', 'string', 'min:8', 'confirmed'],
         ]);
 
-        // Students can change their display name.
-        // Email, course, and class are locked because they affect school identity.
-        $request->user()->update($validated);
+        $data = [
+            'name' => $validated['name'],
+        ];
 
-        return redirect()->route('settings')->with('success', 'Name updated.');
+        if (! empty($validated['password'])) {
+            $data['password'] = $validated['password'];
+        }
+
+        // Students can change their display name and password.
+        // Email, course, and class are locked because they affect school identity.
+        $request->user()->update($data);
+
+        return redirect()->route('settings')->with('success', 'Settings updated.');
     }
 }

@@ -33,9 +33,7 @@ Route::middleware('auth')->group(function () {
      */
     Route::get('/tasks', [DailyTaskController::class, 'index'])->name('tasks');
     Route::post('/tasks', [DailyTaskController::class, 'store'])->name('tasks.store');
-    Route::put('/tasks/{task}', [DailyTaskController::class, 'update'])->name('tasks.update');
     Route::patch('/tasks/{task}/toggle', [DailyTaskController::class, 'toggle'])->name('tasks.toggle');
-    Route::delete('/tasks/{task}', [DailyTaskController::class, 'destroy'])->name('tasks.destroy');
 
     Route::view('/calendar', 'workspace.placeholder', ['title' => 'Calendar'])->name('calendar');
     Route::view('/grades', 'workspace.placeholder', ['title' => 'Grades'])->name('grades');

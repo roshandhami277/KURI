@@ -33,12 +33,18 @@
             <input id="email" type="email" value="{{ $user->email }}" disabled>
 
             <label for="course">Course</label>
-            <input id="course" type="text" value="{{ $user->course->name }}" disabled>
+            <input id="course" type="text" value="{{ $user->course?->name ?? 'Not selected' }}" disabled>
 
             <label for="school_class">Class</label>
-            <input id="school_class" type="text" value="{{ $user->schoolClass->name }}" disabled>
+            <input id="school_class" type="text" value="{{ $user->schoolClass?->name ?? 'Not selected' }}" disabled>
 
-            <button type="submit">Save name</button>
+            <label for="password">New password</label>
+            <input id="password" name="password" type="password" placeholder="Leave empty to keep current password">
+
+            <label for="password_confirmation">Confirm password</label>
+            <input id="password_confirmation" name="password_confirmation" type="password" placeholder="Repeat the new password">
+
+            <button type="submit">Save settings</button>
         </form>
 
         <p class="small-link">

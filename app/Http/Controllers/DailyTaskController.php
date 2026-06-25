@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\DailyTask;
-use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\View\View;
@@ -19,62 +19,37 @@ class DailyTaskController extends Controller
             'tasks' => $request->user()
                 ->dailyTasks()
                 ->whereDate('task_date', $selectedDate)
-                ->latest()
+                ->oldest()
                 ->get(),
         ]);
     }
 
-    public function store(Request $request): RedirectResponse
+    public function store(Request $request): JsonResponse
     {
         $validated = $request->validate([
-            'title' => ['required', 'string', 'max:150'],
+            'title' => ['required', 'string', 'max:200'],
             'task_date' => ['required', 'date'],
         ]);
 
-        // Creating through the logged-in user automatically fills user_id.
-        $request->user()->dailyTasks()->create($validated);
+        $task = $request->user()->dailyTasks()->create($validated);
 
-        return back()->with('success', 'Task added.');
-    }
-
-    public function update(Request $request, DailyTask $task): RedirectResponse
-    {
-        $this->checkTaskOwner($request, $task);
-
-        $validated = $request->validate([
-            'title' => ['required', 'string', 'max:150'],
-            'task_date' => ['required', 'date'],
+        return response()->json([
+            'id' => $task->id,
+            'title' => $task->title,
+            'toggle_url' => route('tasks.toggle', $task),
         ]);
-
-        $task->update($validated);
-
-        return redirect()
-            ->route('tasks', ['date' => $validated['task_date']])
-            ->with('success', 'Task updated.');
     }
 
-    public function toggle(Request $request, DailyTask $task): RedirectResponse
+    public function toggle(Request $request, DailyTask $task): JsonResponse
     {
-        $this->checkTaskOwner($request, $task);
+        abort_unless($task->user_id === $request->user()->id, 403);
 
         $task->update([
             'completed_at' => $task->completed_at ? null : now(),
         ]);
 
-        return back();
-    }
-
-    public function destroy(Request $request, DailyTask $task): RedirectResponse
-    {
-        $this->checkTaskOwner($request, $task);
-
-        $task->delete();
-
-        return back()->with('success', 'Task deleted.');
-    }
-
-    private function checkTaskOwner(Request $request, DailyTask $task): void
-    {
-        abort_unless($task->user_id === $request->user()->id, 403);
+        return response()->json([
+            'completed' => $task->completed_at !== null,
+        ]);
     }
 }

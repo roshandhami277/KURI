@@ -6,12 +6,8 @@
     <div class="page-heading">
         <p>Daily planner</p>
         <h1>Daily tasks</h1>
-        <span>Add what you need to do today, mark it done, or look at another date.</span>
+        <span>Write a task, press Enter, and it becomes a checkbox.</span>
     </div>
-
-    @if (session('success'))
-        <p class="success-message">{{ session('success') }}</p>
-    @endif
 
     @if ($errors->any())
         <div class="error-box">
@@ -21,60 +17,89 @@
         </div>
     @endif
 
-    <section class="tasks-layout">
-        <div class="form-card">
-            <form class="date-form" method="GET" action="{{ route('tasks') }}">
-                <label for="date">View date</label>
-                <input id="date" name="date" type="date" value="{{ $selectedDate->format('Y-m-d') }}" onchange="this.form.submit()">
-            </form>
+    <section class="single-todo-card">
+        <h2>Today's to-do list</h2>
 
-            <form method="POST" action="{{ route('tasks.store') }}">
-                @csrf
-                <input name="task_date" type="hidden" value="{{ $selectedDate->format('Y-m-d') }}">
-
-                <label for="title">New task</label>
-                <input id="title" name="title" type="text" placeholder="Example: finish maths homework" required>
-
-                <button type="submit">Add task</button>
-            </form>
+        <div class="todo-lines" data-task-list>
+            @foreach ($tasks as $task)
+                <label class="todo-line" data-toggle-url="{{ route('tasks.toggle', $task) }}">
+                    <input type="checkbox" @checked($task->completed_at)>
+                    <span>{{ $task->title }}</span>
+                </label>
+            @endforeach
         </div>
 
-        <div class="task-list-card">
-            <h2>{{ $selectedDate->isToday() ? 'Today' : $selectedDate->format('j F Y') }}</h2>
-
-            @forelse ($tasks as $task)
-                <article @class(['task-row', 'completed' => $task->completed_at])>
-                    <form method="POST" action="{{ route('tasks.toggle', $task) }}">
-                        @csrf
-                        @method('PATCH')
-                        <button class="task-check" type="submit">{{ $task->completed_at ? '✓' : '' }}</button>
-                    </form>
-
-                    <div>
-                        <strong>{{ $task->title }}</strong>
-                        <small>{{ $task->completed_at ? 'Completed' : 'Not completed' }}</small>
-                    </div>
-
-                    <details>
-                        <summary>Edit</summary>
-                        <form method="POST" action="{{ route('tasks.update', $task) }}">
-                            @csrf
-                            @method('PUT')
-                            <input name="title" type="text" value="{{ $task->title }}" required>
-                            <input name="task_date" type="date" value="{{ $task->task_date->format('Y-m-d') }}" required>
-                            <button type="submit">Save</button>
-                        </form>
-
-                        <form method="POST" action="{{ route('tasks.destroy', $task) }}">
-                            @csrf
-                            @method('DELETE')
-                            <button class="danger-button" type="submit">Delete</button>
-                        </form>
-                    </details>
-                </article>
-            @empty
-                <p class="empty-message">No tasks for this day yet.</p>
-            @endforelse
-        </div>
+        <label class="writing-line">
+            <input type="text" placeholder="Write a task and press Enter" data-new-task>
+        </label>
     </section>
+
+    <script>
+        const taskList = document.querySelector('[data-task-list]');
+        const newTaskInput = document.querySelector('[data-new-task]');
+        const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
+
+        function createTaskLine(task) {
+            const line = document.createElement('label');
+            line.className = 'todo-line';
+            line.dataset.toggleUrl = task.toggle_url;
+            line.innerHTML = `
+                <input type="checkbox">
+                <span></span>
+            `;
+
+            line.querySelector('span').textContent = task.title;
+            taskList.appendChild(line);
+        }
+
+        newTaskInput.addEventListener('keydown', function (event) {
+            if (event.key !== 'Enter') {
+                return;
+            }
+
+            event.preventDefault();
+
+            const title = newTaskInput.value.trim();
+
+            if (title === '') {
+                return;
+            }
+
+            fetch(@json(route('tasks.store')), {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': csrfToken,
+                },
+                body: JSON.stringify({
+                    title: title,
+                    task_date: @json($selectedDate->format('Y-m-d')),
+                }),
+            })
+                .then(function (response) {
+                    return response.json();
+                })
+                .then(function (task) {
+                    createTaskLine(task);
+                    newTaskInput.value = '';
+                });
+        });
+
+        taskList.addEventListener('change', function (event) {
+            const checkbox = event.target;
+
+            if (checkbox.type !== 'checkbox') {
+                return;
+            }
+
+            fetch(checkbox.closest('[data-toggle-url]').dataset.toggleUrl, {
+                method: 'PATCH',
+                headers: {
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': csrfToken,
+                },
+            });
+        });
+    </script>
 @endsection
