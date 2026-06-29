@@ -32,6 +32,8 @@ class User extends Authenticatable
 
     public function dailyTasks(): HasMany
     {
+        // One user can have many daily task rows.
+        // Laravel knows these rows belong together because daily_tasks has user_id.
         return $this->hasMany(DailyTask::class);
     }
 

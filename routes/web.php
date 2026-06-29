@@ -29,17 +29,21 @@ Route::middleware('auth')->group(function () {
     /*
      * These pages are placeholders for now.
      * Each route opens the same simple view with a different title.
-     * Later, we can replace one placeholder at a time with a real feature.
      */
+    //TASK ROUTES
     Route::get('/tasks', [DailyTaskController::class, 'index'])->name('tasks');
     Route::post('/tasks', [DailyTaskController::class, 'store'])->name('tasks.store');
+    Route::patch('/tasks/{task}', [DailyTaskController::class, 'update'])->name('tasks.update');
     Route::patch('/tasks/{task}/toggle', [DailyTaskController::class, 'toggle'])->name('tasks.toggle');
+    Route::delete('/tasks/{task}', [DailyTaskController::class, 'destroy'])->name('tasks.destroy');
 
+    //CALENDAR ROUTES
     Route::view('/calendar', 'workspace.placeholder', ['title' => 'Calendar'])->name('calendar');
     Route::view('/grades', 'workspace.placeholder', ['title' => 'Grades'])->name('grades');
     Route::view('/notes', 'workspace.placeholder', ['title' => 'Notes'])->name('notes');
     Route::view('/chat', 'workspace.placeholder', ['title' => 'Chat'])->name('chat');
     Route::view('/news', 'workspace.placeholder', ['title' => 'School news'])->name('news');
+
     Route::get('/settings', [SettingsController::class, 'index'])->name('settings');
     Route::put('/settings', [SettingsController::class, 'update'])->name('settings.update');
 

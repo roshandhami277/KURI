@@ -10,9 +10,13 @@ return new class extends Migration
     {
         Schema::create('daily_tasks', function (Blueprint $table) {
             $table->id();
+            // user_id connects each task to one account in the users table.
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
+            // title is the text the student writes.
             $table->string('title');
+            // task_date lets the same student have different tasks on different days.
             $table->date('task_date');
+            // null means incomplete. A date/time means completed.
             $table->timestamp('completed_at')->nullable();
             $table->timestamps();
         });
