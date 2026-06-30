@@ -37,6 +37,13 @@ class User extends Authenticatable
         return $this->hasMany(DailyTask::class);
     }
 
+    public function calendarEvents(): HasMany
+    {
+        // One user can have many calendar event rows.
+        // Laravel uses calendar_events.user_id to keep each student's calendar private.
+        return $this->hasMany(CalendarEvent::class);
+    }
+
     /**
      * Get the attributes that should be cast.
      *

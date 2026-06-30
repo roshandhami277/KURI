@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\CalendarController;
 use App\Http\Controllers\DailyTaskController;
 use App\Http\Controllers\SettingsController;
 use Illuminate\Support\Facades\Route;
@@ -38,7 +39,11 @@ Route::middleware('auth')->group(function () {
     Route::delete('/tasks/{task}', [DailyTaskController::class, 'destroy'])->name('tasks.destroy');
 
     //CALENDAR ROUTES
-    Route::view('/calendar', 'workspace.placeholder', ['title' => 'Calendar'])->name('calendar');
+    Route::get('/calendar', [CalendarController::class, 'index'])->name('calendar');
+    Route::post('/calendar', [CalendarController::class, 'store'])->name('calendar.store');
+    Route::patch('/calendar/{event}', [CalendarController::class, 'update'])->name('calendar.update');
+    Route::delete('/calendar/{event}', [CalendarController::class, 'destroy'])->name('calendar.destroy');
+
     Route::view('/grades', 'workspace.placeholder', ['title' => 'Grades'])->name('grades');
     Route::view('/notes', 'workspace.placeholder', ['title' => 'Notes'])->name('notes');
     Route::view('/chat', 'workspace.placeholder', ['title' => 'Chat'])->name('chat');
