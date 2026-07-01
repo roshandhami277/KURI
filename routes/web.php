@@ -4,6 +4,8 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\CalendarController;
 use App\Http\Controllers\DailyTaskController;
+use App\Http\Controllers\GradeController;
+use App\Http\Controllers\NoteController;
 use App\Http\Controllers\SettingsController;
 use Illuminate\Support\Facades\Route;
 
@@ -44,8 +46,18 @@ Route::middleware('auth')->group(function () {
     Route::patch('/calendar/{event}', [CalendarController::class, 'update'])->name('calendar.update');
     Route::delete('/calendar/{event}', [CalendarController::class, 'destroy'])->name('calendar.destroy');
 
-    Route::view('/grades', 'workspace.placeholder', ['title' => 'Grades'])->name('grades');
-    Route::view('/notes', 'workspace.placeholder', ['title' => 'Notes'])->name('notes');
+    //GRADE ROUTES
+    Route::get('/grades', [GradeController::class, 'index'])->name('grades');
+    Route::post('/grades', [GradeController::class, 'store'])->name('grades.store');
+    Route::patch('/grades/{grade}', [GradeController::class, 'update'])->name('grades.update');
+    Route::delete('/grades/{grade}', [GradeController::class, 'destroy'])->name('grades.destroy');
+
+    //NOTE ROUTES
+    Route::get('/notes', [NoteController::class, 'index'])->name('notes');
+    Route::post('/notes', [NoteController::class, 'store'])->name('notes.store');
+    Route::patch('/notes/{note}', [NoteController::class, 'update'])->name('notes.update');
+    Route::delete('/notes/{note}', [NoteController::class, 'destroy'])->name('notes.destroy');
+
     Route::view('/chat', 'workspace.placeholder', ['title' => 'Chat'])->name('chat');
     Route::view('/news', 'workspace.placeholder', ['title' => 'School news'])->name('news');
 

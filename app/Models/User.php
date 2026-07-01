@@ -44,6 +44,18 @@ class User extends Authenticatable
         return $this->hasMany(CalendarEvent::class);
     }
 
+    public function grades(): HasMany
+    {
+        // One student can have many grade rows.
+        return $this->hasMany(Grade::class);
+    }
+
+    public function notes(): HasMany
+    {
+        // One student can create many private notes.
+        return $this->hasMany(Note::class);
+    }
+
     /**
      * Get the attributes that should be cast.
      *

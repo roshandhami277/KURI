@@ -150,7 +150,7 @@
 
                                     <div class="timeline-actions">
                                         <a href="#edit-event-{{ $event->id }}" aria-label="Edit {{ $event->title }}">
-                                            <span class="material-symbols-outlined">edit</span>
+                                            <span>✎</span>
                                         </a>
 
                                         {{-- This form sends DELETE to CalendarController@destroy. --}}
@@ -159,7 +159,7 @@
                                             @method('DELETE')
 
                                             <button type="submit" aria-label="Delete {{ $event->title }}">
-                                                <span class="material-symbols-outlined">delete</span>
+                                                <span>×</span>
                                             </button>
                                         </form>
                                     </div>
