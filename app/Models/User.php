@@ -13,7 +13,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
 // These are the only user fields we allow forms to save for now.
-#[Fillable(['name', 'email', 'password', 'course_id', 'school_class_id'])]
+#[Fillable(['name', 'email', 'password', 'role', 'course_id', 'school_class_id'])]
 #[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable
 {
@@ -59,6 +59,27 @@ class User extends Authenticatable
     public function sentChatMessages(): HasMany
     {
         return $this->hasMany(ChatMessage::class, 'sender_id');
+    }
+
+    public function isStudent(): bool
+    {
+        return $this->role === 'student';
+    }
+
+    public function isTeacher(): bool
+    {
+        return $this->role === 'teacher';
+    }
+
+    public function isAdmin(): bool
+    {
+        return $this->role === 'admin';
+    }
+
+    public function canPostSchoolContent(): bool
+    {
+        // Later news and teacher chat tools can use this helper.
+        return $this->isTeacher() || $this->isAdmin();
     }
 
     /**

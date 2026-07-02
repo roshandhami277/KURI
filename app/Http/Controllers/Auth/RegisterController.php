@@ -29,6 +29,8 @@ class RegisterController extends Controller
     // Validate the form, create the account, and log the new user in.
     public function store(Request $request): RedirectResponse
     {
+        $role = str_contains(strtolower($request->email), '@alunos.') ? 'student' : 'teacher';
+
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:100'],
             'email' => [
@@ -47,16 +49,30 @@ class RegisterController extends Controller
             ],
             'password' => ['required', 'confirmed', 'min:5'],
             'course_id' => [
-                'required',
+                Rule::requiredIf($role === 'student'),
+                'nullable',
                 Rule::exists('courses', 'id')->where('is_active', true),
             ],
             'school_class_id' => [
-                'required',
+                Rule::requiredIf($role === 'student'),
+                'nullable',
                 Rule::exists('school_classes', 'id')->where('is_active', true),
             ],
         ], [
             'email.regex' => 'Please use your correct school email.',
+            'course_id.required' => 'Students must choose a course.',
+            'school_class_id.required' => 'Students must choose a class.',
         ]);
+
+        // Students are detected by @alunos.ael.edu.pt.
+        // Teachers use a normal @ael.edu.pt email.
+        // Admins are not created by the public register form; you can promote them later.
+        $validated['role'] = $role;
+
+        if ($role === 'teacher') {
+            $validated['course_id'] = null;
+            $validated['school_class_id'] = null;
+        }
 
         // The User model automatically hashes the password before saving it.
         $user = User::create($validated);

@@ -8,10 +8,10 @@
 
 @section('content')
     <section class="auth-card">
-        <p class="eyebrow">New student account</p>
+        <p class="eyebrow">New account</p>
         <h1>Register</h1>
         <p class="introduction">Use your AEL school email to create your Kuri account.</p>
-        <p class="warning-text">Choose your course and class carefully. You cannot change them yourself later.</p>
+        <p class="warning-text">Student emails create student accounts. Teacher emails create teacher accounts.</p>
 
         <form method="POST" action="{{ route('register.store') }}">
             @csrf
@@ -29,7 +29,7 @@
             @enderror
 
             <label for="course_id">Course</label>
-            <select id="course_id" name="course_id" required>
+            <select id="course_id" name="course_id">
                 <option value="">Choose your course</option>
                 @foreach ($courses as $course)
                     <option value="{{ $course->id }}" @selected(old('course_id') == $course->id)>
@@ -42,7 +42,7 @@
             @enderror
 
             <label for="school_class_id">Class</label>
-            <select id="school_class_id" name="school_class_id" required>
+            <select id="school_class_id" name="school_class_id">
                 <option value="">Choose your class</option>
                 @foreach ($schoolClasses as $schoolClass)
                     <option value="{{ $schoolClass->id }}" @selected(old('school_class_id') == $schoolClass->id)>
