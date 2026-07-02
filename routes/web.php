@@ -3,6 +3,7 @@
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\CalendarController;
+use App\Http\Controllers\ChatController;
 use App\Http\Controllers\DailyTaskController;
 use App\Http\Controllers\GradeController;
 use App\Http\Controllers\NoteController;
@@ -58,7 +59,12 @@ Route::middleware('auth')->group(function () {
     Route::patch('/notes/{note}', [NoteController::class, 'update'])->name('notes.update');
     Route::delete('/notes/{note}', [NoteController::class, 'destroy'])->name('notes.destroy');
 
-    Route::view('/chat', 'workspace.placeholder', ['title' => 'Chat'])->name('chat');
+    //CHAT ROUTES
+    Route::get('/chat', [ChatController::class, 'index'])->name('chat');
+    Route::post('/chat', [ChatController::class, 'store'])->name('chat.store');
+    Route::patch('/chat/{message}', [ChatController::class, 'update'])->name('chat.update');
+    Route::delete('/chat/{message}', [ChatController::class, 'destroy'])->name('chat.destroy');
+
     Route::view('/news', 'workspace.placeholder', ['title' => 'School news'])->name('news');
 
     Route::get('/settings', [SettingsController::class, 'index'])->name('settings');

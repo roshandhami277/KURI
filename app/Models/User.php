@@ -56,6 +56,11 @@ class User extends Authenticatable
         return $this->hasMany(Note::class);
     }
 
+    public function sentChatMessages(): HasMany
+    {
+        return $this->hasMany(ChatMessage::class, 'sender_id');
+    }
+
     /**
      * Get the attributes that should be cast.
      *
