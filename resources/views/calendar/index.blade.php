@@ -1,13 +1,25 @@
 @extends('layouts.nav')
 
-@section('title', 'Calendar')
+@section('title', 'Calendário')
 
 @section('content')
+    @php
+        $eventTypeLabels = [
+            'Homework' => 'Trabalho de casa',
+            'Test' => 'Teste',
+            'Exam' => 'Exame',
+            'Presentation' => 'Apresentação',
+            'Other' => 'Outro',
+        ];
+    @endphp
+
+    <div class="page-cover page-cover-calendar" aria-hidden="true"></div>
+
     <div class="calendar-heading">
         <div class="page-heading">
-            <p>Planner</p>
-            <h1>Calendar</h1>
-            <span>Click a day to open its timeline. Then click a timeline hour to create an event.</span>
+            <p>Planeador</p>
+            <h1>Calendário</h1>
+            <span>Clica num dia para abrir a linha do tempo. Depois clica numa hora para criar um evento.</span>
         </div>
     </div>
 
@@ -24,18 +36,18 @@
             <div class="calendar-top">
                 {{-- These links change the month in the URL. CalendarController reads the URL. --}}
                 <a href="{{ route('calendar', ['month' => $previousMonth->format('Y-m'), 'date' => $previousMonth->toDateString()]) }}">‹</a>
-                <h2>{{ $month->format('F Y') }}</h2>
+                <h2>{{ $month->format('m/Y') }}</h2>
                 <a href="{{ route('calendar', ['month' => $nextMonth->format('Y-m'), 'date' => $nextMonth->toDateString()]) }}">›</a>
             </div>
 
             <div class="calendar-weekdays">
-                <span>Mon</span>
-                <span>Tue</span>
-                <span>Wed</span>
-                <span>Thu</span>
-                <span>Fri</span>
-                <span>Sat</span>
-                <span>Sun</span>
+                <span>Seg</span>
+                <span>Ter</span>
+                <span>Qua</span>
+                <span>Qui</span>
+                <span>Sex</span>
+                <span>Sáb</span>
+                <span>Dom</span>
             </div>
 
             <div class="calendar-grid">
@@ -71,7 +83,7 @@
                             @endforeach
 
                             @if ($dayEvents->count() > 3)
-                                <em>+{{ $dayEvents->count() - 3 }} more</em>
+                                <em>+{{ $dayEvents->count() - 3 }} mais</em>
                             @endif
                         </div>
                     </a>
@@ -87,13 +99,13 @@
 
             <div class="timeline-top">
                 <div>
-                    <p>Selected day</p>
-                    <h2>{{ $selectedDate->format('l, j F Y') }}</h2>
+                    <p>Dia selecionado</p>
+                    <h2>{{ $selectedDate->format('d/m/Y') }}</h2>
                 </div>
             </div>
 
             @if ($selectedEvents->isEmpty())
-                <p class="timeline-empty">No events for this day yet.</p>
+                <p class="timeline-empty">Ainda não há eventos neste dia.</p>
             @endif
 
             <div class="day-timeline">
@@ -136,7 +148,7 @@
                                             @if ($event->end_time)
                                                 - {{ substr($event->end_time, 0, 5) }}
                                             @endif
-                                            · {{ $event->type }}
+                                            · {{ $eventTypeLabels[$event->type] ?? $event->type }}
                                         </span>
 
                                         @if ($event->notes)
@@ -144,12 +156,12 @@
                                         @endif
 
                                         @if ($event->reminder_enabled)
-                                            <p>Reminder email at {{ substr($event->reminder_time, 0, 5) }}</p>
+                                            <p>Email de lembrete às {{ substr($event->reminder_time, 0, 5) }}</p>
                                         @endif
                                     </div>
 
                                     <div class="timeline-actions">
-                                        <a href="#edit-event-{{ $event->id }}" aria-label="Edit {{ $event->title }}">
+                                        <a href="#edit-event-{{ $event->id }}" aria-label="Editar {{ $event->title }}">
                                             <span>✎</span>
                                         </a>
 
@@ -158,7 +170,7 @@
                                             @csrf
                                             @method('DELETE')
 
-                                            <button type="submit" aria-label="Delete {{ $event->title }}">
+                                            <button type="submit" aria-label="Eliminar {{ $event->title }}">
                                                 <span>×</span>
                                             </button>
                                         </form>
@@ -181,50 +193,50 @@
                             href="{{ route('calendar', ['month' => $month->format('Y-m'), 'date' => $selectedDate->toDateString(), 'start' => $formStartTime]) }}#day-timeline"
                         >×</a>
 
-                        <p>New event</p>
-                        <h2>Add to calendar</h2>
+                        <p>Novo evento</p>
+                        <h2>Adicionar ao calendário</h2>
 
-                        <label for="event-date">Date</label>
+                        <label for="event-date">Data</label>
                         <input id="event-date" name="event_date" type="date" value="{{ $selectedDate->toDateString() }}" required>
 
-                        <label for="event-title">Title</label>
-                        <input id="event-title" name="title" type="text" placeholder="Example: Biology test" required>
+                        <label for="event-title">Título</label>
+                        <input id="event-title" name="title" type="text" placeholder="Exemplo: teste de Biologia" required>
 
-                        <label for="event-type">Type</label>
+                        <label for="event-type">Tipo</label>
                         <select id="event-type" name="type" required>
-                            <option value="Homework">Homework</option>
-                            <option value="Test">Test</option>
-                            <option value="Exam">Exam</option>
-                            <option value="Presentation">Presentation</option>
-                            <option value="Other">Other</option>
+                            <option value="Homework">Trabalho de casa</option>
+                            <option value="Test">Teste</option>
+                            <option value="Exam">Exame</option>
+                            <option value="Presentation">Apresentação</option>
+                            <option value="Other">Outro</option>
                         </select>
 
                         <div class="time-fields">
                             <label for="event-start-time">
-                                Start
+                                Início
                                 <input id="event-start-time" name="start_time" type="time" value="{{ $formStartTime }}" required>
                             </label>
 
                             <label for="event-end-time">
-                                End
+                                Fim
                                 <input id="event-end-time" name="end_time" type="time">
                             </label>
                         </div>
 
-                        <label for="event-notes">Notes</label>
-                        <textarea id="event-notes" name="notes" placeholder="Small details"></textarea>
+                        <label for="event-notes">Apontamentos</label>
+                        <textarea id="event-notes" name="notes" placeholder="Pequenos detalhes"></textarea>
 
                         <label class="reminder-toggle-row">
                             <input class="reminder-toggle" name="reminder_enabled" type="checkbox" value="1">
-                            Send a reminder by email later
+                            Enviar um lembrete por email mais tarde
                         </label>
 
                         <div class="reminder-time-field">
-                            <label for="event-reminder-time">Reminder time</label>
+                            <label for="event-reminder-time">Hora do lembrete</label>
                             <input id="event-reminder-time" name="reminder_time" type="time">
                         </div>
 
-                        <button type="submit">Add event</button>
+                        <button type="submit">Adicionar evento</button>
                     </form>
                 </div>
             @endif
@@ -240,48 +252,48 @@
 
                 <a class="overlay-close" href="#">×</a>
 
-                <p>Edit event</p>
+                <p>Editar evento</p>
                 <h2>{{ $event->title }}</h2>
 
-                <label for="event-date-{{ $event->id }}">Date</label>
+                <label for="event-date-{{ $event->id }}">Data</label>
                 <input id="event-date-{{ $event->id }}" name="event_date" type="date" value="{{ $event->event_date->toDateString() }}" required>
 
-                <label for="event-title-{{ $event->id }}">Title</label>
+                <label for="event-title-{{ $event->id }}">Título</label>
                 <input id="event-title-{{ $event->id }}" name="title" type="text" value="{{ $event->title }}" required>
 
-                <label for="event-type-{{ $event->id }}">Type</label>
+                <label for="event-type-{{ $event->id }}">Tipo</label>
                 <select id="event-type-{{ $event->id }}" name="type" required>
-                    @foreach (['Homework', 'Test', 'Exam', 'Presentation', 'Other'] as $type)
-                        <option value="{{ $type }}" @selected($event->type === $type)>{{ $type }}</option>
+                    @foreach ($eventTypeLabels as $type => $label)
+                        <option value="{{ $type }}" @selected($event->type === $type)>{{ $label }}</option>
                     @endforeach
                 </select>
 
                 <div class="time-fields">
                     <label for="event-start-time-{{ $event->id }}">
-                        Start
+                        Início
                         <input id="event-start-time-{{ $event->id }}" name="start_time" type="time" value="{{ substr($event->start_time, 0, 5) }}" required>
                     </label>
 
                     <label for="event-end-time-{{ $event->id }}">
-                        End
+                        Fim
                         <input id="event-end-time-{{ $event->id }}" name="end_time" type="time" value="{{ $event->end_time ? substr($event->end_time, 0, 5) : '' }}">
                     </label>
                 </div>
 
-                <label for="event-notes-{{ $event->id }}">Notes</label>
-                <textarea id="event-notes-{{ $event->id }}" name="notes" placeholder="Small details">{{ $event->notes }}</textarea>
+                <label for="event-notes-{{ $event->id }}">Apontamentos</label>
+                <textarea id="event-notes-{{ $event->id }}" name="notes" placeholder="Pequenos detalhes">{{ $event->notes }}</textarea>
 
                 <label class="reminder-toggle-row">
                     <input class="reminder-toggle" name="reminder_enabled" type="checkbox" value="1" @checked($event->reminder_enabled)>
-                    Send a reminder by email later
+                    Enviar um lembrete por email mais tarde
                 </label>
 
                 <div class="reminder-time-field">
-                    <label for="event-reminder-time-{{ $event->id }}">Reminder time</label>
+                    <label for="event-reminder-time-{{ $event->id }}">Hora do lembrete</label>
                     <input id="event-reminder-time-{{ $event->id }}" name="reminder_time" type="time" value="{{ $event->reminder_time ? substr($event->reminder_time, 0, 5) : '' }}">
                 </div>
 
-                <button type="submit">Save event</button>
+                <button type="submit">Guardar evento</button>
             </form>
         </div>
     @endforeach

@@ -23,20 +23,20 @@
                 <div class="chat-avatar">{{ strtoupper(substr(auth()->user()->name, 0, 1)) }}</div>
                 <div>
                     <strong>{{ auth()->user()->name }}</strong>
-                    <small>{{ $user->isAdmin() ? 'Admin account' : ($user->course?->name ?? 'No course selected') }}</small>
+                    <small>{{ $user->isAdmin() ? 'Conta de administrador' : ($user->course?->name ?? 'Nenhum curso selecionado') }}</small>
                 </div>
             </div>
 
             <div class="chat-groups-area">
                 @if ($user->isAdmin())
                     <div class="chat-group-filter">
-                        <input id="chat-group-search" type="text" placeholder="Search groups" autocomplete="off">
+                        <input id="chat-group-search" type="text" placeholder="Pesquisar grupos" autocomplete="off">
                     </div>
                 @endif
 
                 @if ($user->isAdmin() && $courses->isNotEmpty())
                     <div class="chat-group-list">
-                        <p>Course groups</p>
+                        <p>Grupos de curso</p>
 
                         @foreach ($courses as $chatCourse)
                             <a
@@ -49,20 +49,20 @@
                                 <div class="chat-avatar small">C</div>
                                 <div>
                                     <strong>{{ $chatCourse->name }}</strong>
-                                    <small>Course group</small>
+                                    <small>Grupo de curso</small>
                                 </div>
                             </a>
                         @endforeach
                     </div>
                 @elseif ($course)
                     <div class="chat-group-list">
-                        <p>Course groups</p>
+                        <p>Grupos de curso</p>
 
                         <a href="{{ route('chat') }}" data-chat-link @class(['chat-group-card', 'active' => ! $selectedGroup])>
                             <div class="chat-avatar small">C</div>
                             <div>
                                 <strong>{{ $course->name }}</strong>
-                                <small>Course group</small>
+                                <small>Grupo de curso</small>
                             </div>
                         </a>
                     </div>
@@ -70,7 +70,7 @@
 
                 @if ($groups->isNotEmpty())
                     <div class="chat-group-list">
-                        <p>Teacher groups</p>
+                        <p>Grupos de professores</p>
 
                         @foreach ($groups as $group)
                             @php
@@ -97,13 +97,13 @@
                                         </summary>
 
                                         <div>
-                                            <a href="#edit-chat-group-{{ $group->id }}">Edit</a>
+                                            <a href="#edit-chat-group-{{ $group->id }}">Editar</a>
 
-                                            <form method="POST" action="{{ route('chat.groups.destroy', $group) }}" onsubmit="return confirm('Delete this group? This will also delete its messages.');">
+                                            <form method="POST" action="{{ route('chat.groups.destroy', $group) }}" onsubmit="return confirm(@json('Eliminar este grupo? Isto também elimina as mensagens.'));">
                                                 @csrf
                                                 @method('DELETE')
 
-                                                <button type="submit">Delete</button>
+                                                <button type="submit">Eliminar</button>
                                             </form>
                                         </div>
                                     </details>
@@ -114,16 +114,16 @@
                 @endif
 
                 @if ($canManageGroups)
-                    <a class="chat-create-group-link" href="#new-chat-group">Create a group</a>
+                    <a class="chat-create-group-link" href="#new-chat-group">Criar grupo</a>
                 @endif
             </div>
 
             <div class="chat-members">
                 <div class="chat-members-title">
-                    <p>Members</p>
+                    <p>Membros</p>
 
                     @if ($canManageSelectedGroup)
-                        <a href="#add-student-popover">Add a student</a>
+                        <a href="#add-student-popover">Adicionar aluno</a>
                     @endif
 
                     @if ($canManageSelectedGroup)
@@ -132,13 +132,13 @@
                                 @csrf
 
                                 <div class="chat-add-student-top">
-                                    <strong>Add student</strong>
-                                    <a href="#">Close</a>
+                                    <strong>Adicionar aluno</strong>
+                                    <a href="#">Fechar</a>
                                 </div>
 
                                 <div class="chat-add-student-row">
-                                    <input id="student-search" type="text" placeholder="Search student" autocomplete="off">
-                                    <button type="submit">Add</button>
+                                    <input id="student-search" type="text" placeholder="Pesquisar aluno" autocomplete="off">
+                                    <button type="submit">Adicionar</button>
                                 </div>
 
                                 <input id="student-email" name="email" type="hidden" required>
@@ -148,7 +148,7 @@
                     @endif
                 </div>
 
-                <input class="chat-member-search" id="chat-member-search" type="text" placeholder="Search members" autocomplete="off">
+                <input class="chat-member-search" id="chat-member-search" type="text" placeholder="Pesquisar membros" autocomplete="off">
 
                 <div class="chat-member-list">
                     @forelse ($members as $member)
@@ -158,12 +158,12 @@
                                 {{ $member->name }}
 
                                 @if ($member->isAdmin())
-                                    · Admin
+                                    · Administrador
                                 @endif
                             </small>
                         </div>
                     @empty
-                        <small>No members found.</small>
+                        <small>Nenhum membro encontrado.</small>
                     @endforelse
                 </div>
             </div>
@@ -189,7 +189,7 @@
                                         <span class="material-symbols-outlined">description</span>
                                         <div>
                                             <strong>{{ $message->sharedNote->title }}</strong>
-                                            <small>Click to preview note</small>
+                                            <small>Clica para pré-visualizar o apontamento</small>
                                         </div>
                                     </button>
                                 @elseif ($message->body)
@@ -204,10 +204,10 @@
                                 @endif
 
                                 <small>
-                                    {{ $message->sender->name }} · {{ $message->created_at->format('d M H:i') }}
+                                    {{ $message->sender->name }} · {{ $message->created_at->format('d/m H:i') }}
 
                                     @if ($wasEdited)
-                                        · edited at {{ $message->updated_at->format('H:i') }}
+                                        · editado às {{ $message->updated_at->format('H:i') }}
                                     @endif
                                 </small>
                             </div>
@@ -219,13 +219,13 @@
                                     </summary>
 
                                     <div>
-                                        <a href="#edit-message-{{ $message->id }}">Edit</a>
+                                        <a href="#edit-message-{{ $message->id }}">Editar</a>
 
-                                        <form method="POST" action="{{ route('chat.destroy', $message) }}" onsubmit="return confirm('Delete this message?');">
+                                        <form method="POST" action="{{ route('chat.destroy', $message) }}" onsubmit="return confirm(@json('Eliminar esta mensagem?'));">
                                             @csrf
                                             @method('DELETE')
 
-                                            <button type="submit">Delete</button>
+                                            <button type="submit">Eliminar</button>
                                         </form>
                                     </div>
                                 </details>
@@ -234,8 +234,8 @@
                     @empty
                         <div class="chat-no-messages">
                             <span class="material-symbols-outlined">forum</span>
-                            <strong>No messages yet</strong>
-                            <p>Start the course group conversation.</p>
+                            <strong>Ainda não há mensagens</strong>
+                            <p>Começa a conversa do grupo de curso.</p>
                         </div>
                     @endforelse
                 </div>
@@ -248,7 +248,7 @@
                         <input name="course_id" type="hidden" value="{{ $course->id }}">
                     @endif
 
-                    <input name="body" type="text" placeholder="Write something" autocomplete="off">
+                    <input name="body" type="text" placeholder="Escreve algo" autocomplete="off">
 
                     <label class="chat-plain-icon" for="chat-attachment">
                         <span class="material-symbols-outlined">attach_file</span>
@@ -263,8 +263,8 @@
             @else
                 <div class="chat-no-messages">
                     <span class="material-symbols-outlined">forum</span>
-                    <strong>No chat group yet</strong>
-                    <p>Select a course group or teacher group before chatting.</p>
+                    <strong>Ainda não há grupo de chat</strong>
+                    <p>Seleciona um grupo de curso ou grupo de professor antes de conversar.</p>
                 </div>
             @endif
         </div>
@@ -276,8 +276,8 @@
                 <div id="shared-note-{{ $message->id }}" class="chat-note-preview-layer">
                     <div class="chat-note-preview-box">
                         <div class="chat-note-preview-top">
-                            <strong>Shared note preview</strong>
-                            <button type="button" data-close-shared-note>Close</button>
+                            <strong>Pré-visualização do apontamento partilhado</strong>
+                            <button type="button" data-close-shared-note>Fechar</button>
                         </div>
 
                         <div class="chat-note-preview-title">
@@ -300,21 +300,21 @@
                             <p class="chat-note-preview-description">{{ $message->sharedNote->description }}</p>
                         @endif
 
-                        <div class="chat-note-preview-body">{{ trim($message->sharedNote->body ?: 'This note has no body yet.') }}</div>
+                        <div class="chat-note-preview-body">{{ trim($message->sharedNote->body ?: 'Este apontamento ainda não tem conteúdo.') }}</div>
 
                         <div class="chat-note-preview-actions">
                             @if ($message->sharedNote->user_id === auth()->id())
                                 <a class="chat-note-preview-button" href="{{ route('notes') }}#note-{{ $message->sharedNote->id }}">
-                                    Open my note
+                                    Abrir o meu apontamento
                                 </a>
                             @elseif ($user->isAdmin())
-                                <p class="chat-note-preview-admin-text">Admins can preview shared notes, but only students and teachers save notes.</p>
+                                <p class="chat-note-preview-admin-text">Os administradores podem pré-visualizar apontamentos partilhados, mas só alunos e professores guardam apontamentos.</p>
                             @else
                                 <form method="POST" action="{{ route('notes.copy', $message->sharedNote) }}">
                                     @csrf
 
                                     <button class="chat-note-preview-button" type="submit">
-                                        Save to my notes
+                                        Guardar nos meus apontamentos
                                     </button>
                                 </form>
                             @endif
@@ -330,13 +330,13 @@
                         @method('PATCH')
 
                         <div>
-                            <strong>Edit message</strong>
-                            <a href="#">Close</a>
+                            <strong>Editar mensagem</strong>
+                            <a href="#">Fechar</a>
                         </div>
 
                         <textarea name="body" rows="4" required>{{ $message->body }}</textarea>
 
-                        <button type="submit">Save</button>
+                        <button type="submit">Guardar</button>
                     </form>
                 </div>
             @endif
@@ -348,13 +348,13 @@
                     @csrf
 
                     <div>
-                        <strong>Create group</strong>
-                        <a href="#">Close</a>
+                        <strong>Criar grupo</strong>
+                        <a href="#">Fechar</a>
                     </div>
 
-                    <input name="name" type="text" placeholder="Group name" required>
+                    <input name="name" type="text" placeholder="Nome do grupo" required>
 
-                    <button type="submit">Create</button>
+                    <button type="submit">Criar</button>
                 </form>
             </div>
         @endif
@@ -367,13 +367,13 @@
                         @method('PATCH')
 
                         <div>
-                            <strong>Edit group</strong>
-                            <a href="#">Close</a>
+                            <strong>Editar grupo</strong>
+                            <a href="#">Fechar</a>
                         </div>
 
                         <input name="name" type="text" value="{{ $group->name }}" required>
 
-                        <button type="submit">Save</button>
+                        <button type="submit">Guardar</button>
                     </form>
                 </div>
             @endif

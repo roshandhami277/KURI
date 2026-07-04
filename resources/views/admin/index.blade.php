@@ -1,12 +1,20 @@
 @extends('layouts.nav')
 
-@section('title', 'Admin panel')
+@section('title', 'Painel de administração')
 
 @section('content')
+    @php
+        $roleLabels = [
+            'student' => 'Aluno',
+            'teacher' => 'Professor',
+            'admin' => 'Administrador',
+        ];
+    @endphp
+
     <div class="page-heading">
-        <p>Admin panel</p>
-        <h1>Kuri controls.</h1>
-        <span>Manage users and see the course groups that exist in Kuri.</span>
+        <p>Painel de administração</p>
+        <h1>Controlos do Kuri.</h1>
+        <span>Gere utilizadores e vê os grupos de curso existentes no Kuri.</span>
     </div>
 
     @if ($errors->any())
@@ -19,23 +27,23 @@
 
     <section class="admin-stats-grid">
         <div>
-            <small>Total users</small>
+            <small>Total de utilizadores</small>
             <strong>{{ $stats['users'] }}</strong>
         </div>
         <div>
-            <small>Students</small>
+            <small>Alunos</small>
             <strong>{{ $stats['students'] }}</strong>
         </div>
         <div>
-            <small>Teachers</small>
+            <small>Professores</small>
             <strong>{{ $stats['teachers'] }}</strong>
         </div>
         <div>
-            <small>Admins</small>
+            <small>Administradores</small>
             <strong>{{ $stats['admins'] }}</strong>
         </div>
         <div>
-            <small>Groups</small>
+            <small>Grupos</small>
             <strong>{{ $stats['groups'] }}</strong>
         </div>
     </section>
@@ -44,20 +52,20 @@
         <div class="admin-panel-card">
             <div class="admin-section-heading">
                 <div>
-                    <p>Users</p>
-                    <h2>All accounts</h2>
+                    <p>Utilizadores</p>
+                    <h2>Todas as contas</h2>
                 </div>
-                <span>{{ $users->count() }} users</span>
+                <span>{{ $users->count() }} utilizadores</span>
             </div>
 
             <div class="admin-user-tools">
-                <input class="admin-search" id="admin-user-search" type="text" placeholder="Search users by name, email, role, course..." autocomplete="off">
+                <input class="admin-search" id="admin-user-search" type="text" placeholder="Pesquisar utilizadores por nome, email, função, curso..." autocomplete="off">
 
                 <select class="admin-filter-select" id="admin-role-filter">
-                    <option value="">All roles</option>
-                    <option value="student">Students</option>
-                    <option value="teacher">Teachers</option>
-                    <option value="admin">Admins</option>
+                    <option value="">Todas as funções</option>
+                    <option value="student">Alunos</option>
+                    <option value="teacher">Professores</option>
+                    <option value="admin">Administradores</option>
                 </select>
             </div>
 
@@ -72,16 +80,16 @@
                         <a href="#user-info-{{ $user->id }}" class="admin-user-main">
                             <div class="admin-user-name-line">
                                 <strong>{{ $user->name }}</strong>
-                                <span class="admin-role-pill role-{{ $user->role }}">{{ ucfirst($user->role) }}</span>
+                                <span class="admin-role-pill role-{{ $user->role }}">{{ $roleLabels[$user->role] ?? $user->role }}</span>
                             </div>
                             <small>{{ $user->email }}</small>
                             <span>
                                 @if ($user->isAdmin())
-                                    Admin account
+                                    Conta de administrador
                                 @else
-                                    {{ $user->course?->name ?? 'No course' }}
+                                    {{ $user->course?->name ?? 'Sem curso' }}
                                     ·
-                                    {{ $user->schoolClass?->name ?? 'No class' }}
+                                    {{ $user->schoolClass?->name ?? 'Sem turma' }}
                                 @endif
                             </span>
                         </a>
@@ -98,15 +106,15 @@
                             @method('PATCH')
 
                             <label>
-                                <span>Role</span>
+                                <span>Função</span>
                                 <select class="admin-role-select role-{{ $user->role }}" name="role">
-                                    <option value="student" @selected($user->role === 'student')>Student</option>
-                                    <option value="teacher" @selected($user->role === 'teacher')>Teacher</option>
-                                    <option value="admin" @selected($user->role === 'admin')>Admin</option>
+                                    <option value="student" @selected($user->role === 'student')>Aluno</option>
+                                    <option value="teacher" @selected($user->role === 'teacher')>Professor</option>
+                                    <option value="admin" @selected($user->role === 'admin')>Administrador</option>
                                 </select>
                             </label>
 
-                            <button type="submit">Save</button>
+                            <button type="submit">Guardar</button>
                         </form>
                     </div>
                 @endforeach
@@ -116,31 +124,31 @@
         <aside class="admin-panel-card">
             <div class="admin-section-heading">
                 <div>
-                    <p>Groups</p>
-                    <h2>All groups</h2>
+                    <p>Grupos</p>
+                    <h2>Todos os grupos</h2>
                 </div>
-                <span>{{ $groups->count() + $teacherGroups->count() }} groups</span>
+                <span>{{ $groups->count() + $teacherGroups->count() }} grupos</span>
             </div>
 
-            <input class="admin-search" id="admin-group-search" type="text" placeholder="Search groups..." autocomplete="off">
+            <input class="admin-search" id="admin-group-search" type="text" placeholder="Pesquisar grupos..." autocomplete="off">
 
             <div class="admin-group-list">
-                <p>Course groups</p>
+                <p>Grupos de curso</p>
                 @foreach ($groups as $group)
                     <div data-admin-group-row data-admin-search="{{ strtolower($group->name.' course group') }}">
                         <strong>{{ $group->name }}</strong>
-                        <small>{{ $group->users_count + $adminCount }} members including admins</small>
+                        <small>{{ $group->users_count + $adminCount }} membros incluindo administradores</small>
                     </div>
                 @endforeach
 
-                <p>Teacher groups</p>
+                <p>Grupos de professores</p>
                 @forelse ($teacherGroups as $group)
                     <div data-admin-group-row data-admin-search="{{ strtolower($group->name.' '.$group->teacher->name.' teacher group') }}">
                         <strong>{{ $group->name }}</strong>
-                        <small>{{ $group->members_count + $adminCount + 1 }} members including admins · {{ $group->teacher->name }}</small>
+                        <small>{{ $group->members_count + $adminCount + 1 }} membros incluindo administradores · {{ $group->teacher->name }}</small>
                     </div>
                 @empty
-                    <small>No teacher groups yet.</small>
+                    <small>Ainda não há grupos de professores.</small>
                 @endforelse
             </div>
         </aside>
@@ -151,10 +159,10 @@
             <div class="admin-user-box">
                 <div class="admin-user-box-top">
                     <div>
-                        <p>User information</p>
+                        <p>Informação do utilizador</p>
                         <h2>{{ $user->name }}</h2>
                     </div>
-                    <a href="#">Close</a>
+                    <a href="#">Fechar</a>
                 </div>
 
                 <div class="admin-info-grid">
@@ -164,40 +172,40 @@
                     </div>
 
                     <div>
-                        <small>Role</small>
-                        <strong>{{ ucfirst($user->role) }}</strong>
+                        <small>Função</small>
+                        <strong>{{ $roleLabels[$user->role] ?? $user->role }}</strong>
                     </div>
 
                     <div>
-                        <small>Course group</small>
-                        <strong>{{ $user->isAdmin() ? 'Admin account' : ($user->course?->name ?? 'No course') }}</strong>
+                        <small>Grupo de curso</small>
+                        <strong>{{ $user->isAdmin() ? 'Conta de administrador' : ($user->course?->name ?? 'Sem curso') }}</strong>
                     </div>
 
                     <div>
-                        <small>Class</small>
-                        <strong>{{ $user->isAdmin() ? 'Admin account' : ($user->schoolClass?->name ?? 'No class') }}</strong>
+                        <small>Turma</small>
+                        <strong>{{ $user->isAdmin() ? 'Conta de administrador' : ($user->schoolClass?->name ?? 'Sem turma') }}</strong>
                     </div>
 
                     <div>
-                        <small>Account created</small>
+                        <small>Conta criada</small>
                         <strong>{{ $user->created_at->format('d M Y H:i') }}</strong>
                     </div>
 
                     <div>
-                        <small>Last updated</small>
+                        <small>Última atualização</small>
                         <strong>{{ $user->updated_at->format('d M Y H:i') }}</strong>
                     </div>
                 </div>
 
                 @if ($user->id !== auth()->id())
-                    <form class="admin-delete-user-form" method="POST" action="{{ route('admin.users.destroy', $user) }}" onsubmit="return confirm('Delete this user account? This cannot be undone.');">
+                    <form class="admin-delete-user-form" method="POST" action="{{ route('admin.users.destroy', $user) }}" onsubmit="return confirm(@json('Eliminar esta conta de utilizador? Isto não pode ser desfeito.'));">
                         @csrf
                         @method('DELETE')
 
-                        <button type="submit">Delete user</button>
+                        <button type="submit">Eliminar utilizador</button>
                     </form>
                 @else
-                    <p class="admin-self-note">This is your account, so it cannot be deleted here.</p>
+                    <p class="admin-self-note">Esta é a tua conta, por isso não pode ser eliminada aqui.</p>
                 @endif
             </div>
         </div>
@@ -205,13 +213,13 @@
 
     <div class="admin-confirm-overlay" id="admin-role-confirm">
         <div class="admin-confirm-box">
-            <p>Confirm role change</p>
-            <h2>Are you sure?</h2>
-            <span id="admin-role-confirm-text">This will change the user role.</span>
+            <p>Confirmar alteração de função</p>
+            <h2>Tens a certeza?</h2>
+            <span id="admin-role-confirm-text">Isto vai alterar a função do utilizador.</span>
 
             <div>
-                <button type="button" class="admin-confirm-cancel" id="admin-role-cancel">Cancel</button>
-                <button type="button" class="admin-confirm-save" id="admin-role-confirm-button">Yes, save</button>
+                <button type="button" class="admin-confirm-cancel" id="admin-role-cancel">Cancelar</button>
+                <button type="button" class="admin-confirm-save" id="admin-role-confirm-button">Sim, guardar</button>
             </div>
         </div>
     </div>
@@ -224,6 +232,7 @@
         const roleConfirmText = document.getElementById('admin-role-confirm-text');
         const roleConfirmButton = document.getElementById('admin-role-confirm-button');
         const roleCancelButton = document.getElementById('admin-role-cancel');
+        const roleChangeText = @json('Alterar :name de :oldRole para :newRole?');
         let formWaitingForConfirmation = null;
 
         if (userSearch) {
@@ -260,8 +269,10 @@
 
                 event.preventDefault();
                 formWaitingForConfirmation = form;
-                roleConfirmText.textContent = 'Change ' + form.dataset.userName + ' from '
-                    + form.dataset.currentRole + ' to ' + selectedRole + '?';
+                roleConfirmText.textContent = roleChangeText
+                    .replace(':name', form.dataset.userName)
+                    .replace(':oldRole', form.dataset.currentRole)
+                    .replace(':newRole', selectedRole);
                 roleConfirm.classList.add('open');
             });
         });

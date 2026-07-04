@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 420" preserveAspectRatio="xMidYMid slice">
+    <defs>
+        <linearGradient id="bg" x1="0" x2="1" y1="0" y2="1">
+            <stop offset="0" stop-color="#fbfbfa"/>
+            <stop offset="0.5" stop-color="#eeeeeb"/>
+            <stop offset="1" stop-color="#d5d5d0"/>
+        </linearGradient>
+        <pattern id="lines" width="44" height="44" patternUnits="userSpaceOnUse">
+            <path d="M0 44H44" stroke="#1d1d1d" stroke-width="1" opacity="0.08"/>
+        </pattern>
+    </defs>
+    <rect width="1600" height="420" fill="url(#bg)"/>
+    <rect width="1600" height="420" fill="url(#lines)"/>
+    <g transform="translate(170 78)" fill="none" stroke="#1d1d1d" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M0 250h550M0 250V0" stroke-width="12" opacity="0.22"/>
+        <path d="M55 205L150 168L250 185L355 92L500 56" stroke-width="18" opacity="0.8"/>
+        <circle cx="55" cy="205" r="16" fill="#1d1d1d"/>
+        <circle cx="150" cy="168" r="16" fill="#1d1d1d"/>
+        <circle cx="250" cy="185" r="16" fill="#1d1d1d"/>
+        <circle cx="355" cy="92" r="16" fill="#1d1d1d"/>
+        <circle cx="500" cy="56" r="16" fill="#1d1d1d"/>
+    </g>
+    <g transform="translate(920 95)">
+        <rect width="360" height="215" rx="28" fill="#ffffff" opacity="0.92"/>
+        <g fill="#1d1d1d">
+            <rect x="48" y="55" width="92" height="112" rx="14" opacity="0.18"/>
+            <rect x="162" y="88" width="92" height="79" rx="14" opacity="0.28"/>
+            <rect x="276" y="35" width="36" height="132" rx="14" opacity="0.72"/>
+        </g>
+    </g>
+</svg>

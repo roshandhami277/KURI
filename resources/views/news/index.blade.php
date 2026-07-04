@@ -1,6 +1,6 @@
 @extends('layouts.nav')
 
-@section('title', 'School news')
+@section('title', 'Notícias da escola')
 
 @section('content')
     @php
@@ -9,15 +9,15 @@
 
     <div class="page-heading news-heading">
         <div>
-            <p>School news</p>
-            <h1>Announcements.</h1>
-            <span>Teachers and admins can post news. Students can read everything here.</span>
+            <p>Notícias da escola</p>
+            <h1>Avisos.</h1>
+            <span>Professores e administradores podem publicar notícias. Os alunos podem ler tudo aqui.</span>
         </div>
 
         @if ($user->canPostSchoolContent())
             <a class="news-new-button" href="#new-news-post">
                 <span class="material-symbols-outlined">add</span>
-                New post
+                Nova publicação
             </a>
         @endif
     </div>
@@ -45,13 +45,13 @@
                         </summary>
 
                         <div>
-                            <a href="#edit-news-post-{{ $post->id }}">Edit</a>
+                            <a href="#edit-news-post-{{ $post->id }}">Editar</a>
 
-                            <form method="POST" action="{{ route('news.destroy', $post) }}" onsubmit="return confirm('Delete this news post?');">
+                            <form method="POST" action="{{ route('news.destroy', $post) }}" onsubmit="return confirm(@json('Eliminar esta notícia?'));">
                                 @csrf
                                 @method('DELETE')
 
-                                <button type="submit">Delete</button>
+                                <button type="submit">Eliminar</button>
                             </form>
                         </div>
                     </details>
@@ -63,10 +63,10 @@
 
                 <div>
                     <p>
-                        {{ $post->author->name }} · Posted {{ $postedAt }}
+                        {{ $post->author->name }} · Publicado {{ $postedAt }}
 
                         @if ($post->updated_at->gt($post->created_at->copy()->addSecond()))
-                            · edited
+                            · editado
                         @endif
                     </p>
                     <h2>{{ $post->title }}</h2>
@@ -78,7 +78,7 @@
             </article>
         @empty
             <div class="empty-card">
-                <p>No news has been posted yet.</p>
+                <p>Ainda não foi publicada nenhuma notícia.</p>
             </div>
         @endforelse
     </section>
@@ -90,22 +90,22 @@
 
                 <div class="news-overlay-top">
                     <div>
-                        <p>New post</p>
-                        <h2>Post news</h2>
+                        <p>Nova publicação</p>
+                        <h2>Publicar notícia</h2>
                     </div>
-                    <a href="#">Close</a>
+                    <a href="#">Fechar</a>
                 </div>
 
-                <input name="title" type="text" value="{{ old('title') }}" placeholder="News title" required>
-                <textarea name="body" rows="5" placeholder="Write the announcement...">{{ old('body') }}</textarea>
+                <input name="title" type="text" value="{{ old('title') }}" placeholder="Título da notícia" required>
+                <textarea name="body" rows="5" placeholder="Escreve o aviso...">{{ old('body') }}</textarea>
 
                 <label for="news-image">
                     <span class="material-symbols-outlined">image</span>
-                    Add photo
+                    Adicionar foto
                 </label>
                 <input id="news-image" name="image" type="file" accept="image/*">
 
-                <button type="submit">Post</button>
+                <button type="submit">Publicar</button>
             </form>
         </div>
     @endif
@@ -119,22 +119,22 @@
 
                     <div class="news-overlay-top">
                         <div>
-                            <p>Edit post</p>
+                            <p>Editar publicação</p>
                             <h2>{{ $post->title }}</h2>
                         </div>
-                        <a href="#">Close</a>
+                        <a href="#">Fechar</a>
                     </div>
 
-                    <input name="title" type="text" value="{{ old('title', $post->title) }}" placeholder="News title" required>
-                    <textarea name="body" rows="5" placeholder="Write the announcement...">{{ old('body', $post->body) }}</textarea>
+                    <input name="title" type="text" value="{{ old('title', $post->title) }}" placeholder="Título da notícia" required>
+                    <textarea name="body" rows="5" placeholder="Escreve o aviso...">{{ old('body', $post->body) }}</textarea>
 
                     <label for="news-image-{{ $post->id }}">
                         <span class="material-symbols-outlined">image</span>
-                        Replace photo
+                        Substituir foto
                     </label>
                     <input id="news-image-{{ $post->id }}" name="image" type="file" accept="image/*">
 
-                    <button type="submit">Save</button>
+                    <button type="submit">Guardar</button>
                 </form>
             </div>
         @endif

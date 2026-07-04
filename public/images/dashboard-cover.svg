@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 420" preserveAspectRatio="xMidYMid slice">
+    <defs>
+        <linearGradient id="bg" x1="0" x2="1" y1="0" y2="1">
+            <stop offset="0" stop-color="#ffffff"/>
+            <stop offset="0.55" stop-color="#eeeeeb"/>
+            <stop offset="1" stop-color="#d4d4cf"/>
+        </linearGradient>
+        <pattern id="grid" width="42" height="42" patternUnits="userSpaceOnUse">
+            <path d="M42 0H0v42" fill="none" stroke="#1d1d1d" stroke-width="1" opacity="0.08"/>
+        </pattern>
+    </defs>
+    <rect width="1600" height="420" fill="url(#bg)"/>
+    <rect width="1600" height="420" fill="url(#grid)"/>
+    <g fill="#1d1d1d" opacity="0.9">
+        <rect x="150" y="95" width="310" height="190" rx="24" opacity="0.12"/>
+        <rect x="505" y="135" width="250" height="150" rx="22" opacity="0.18"/>
+        <rect x="800" y="85" width="300" height="200" rx="26" opacity="0.1"/>
+        <rect x="1145" y="125" width="300" height="160" rx="24" opacity="0.2"/>
+    </g>
+    <g fill="none" stroke="#1d1d1d" stroke-linecap="round">
+        <path d="M190 140h150M190 180h210M190 220h120" opacity="0.24" stroke-width="10"/>
+        <path d="M548 183h166M548 226h112" opacity="0.3" stroke-width="9"/>
+        <path d="M845 143h190M845 186h132M845 229h220" opacity="0.22" stroke-width="9"/>
+        <path d="M1190 176h180M1190 220h130" opacity="0.34" stroke-width="10"/>
+        <path d="M60 345C300 250 430 370 645 302C890 224 1040 356 1260 280C1420 224 1500 242 1645 180" opacity="0.2" stroke-width="16"/>
+    </g>
+</svg>

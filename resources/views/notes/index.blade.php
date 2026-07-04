@@ -1,13 +1,23 @@
 @extends('layouts.nav')
 
-@section('title', 'Notes')
+@section('title', 'Apontamentos')
 
 @section('content')
+    @php
+        $tagLabels = [
+            'study' => 'Estudo',
+            'personal' => 'Pessoal',
+            'important' => 'Importante',
+        ];
+    @endphp
+
+    <div class="notes-cover" aria-hidden="true"></div>
+
     <div class="page-heading">
-        <p>Study notes</p>
-        <h1>Notes</h1>
-        <span>Write private documents, organize them with simple tags, and open each note like a small workspace.</span>
-        <small class="note-open-hint">Click a note row to open it. Change anything, then press Save at the top.</small>
+        <p>Apontamentos de estudo</p>
+        <h1>Apontamentos</h1>
+        <span>Escreve documentos privados, organiza-os com etiquetas simples e abre cada apontamento como um pequeno espaço de trabalho.</span>
+        <small class="note-open-hint">Clica numa linha de apontamento para abrir. Altera o que quiseres e depois carrega em Guardar no topo.</small>
     </div>
 
     @if ($errors->any())
@@ -28,25 +38,25 @@
                 <div class="note-view-tabs">
                     <button class="active" type="button" data-note-tab="all">
                         <span class="material-symbols-outlined">format_list_bulleted</span>
-                        All notes
+                        Todos os apontamentos
                     </button>
                     <button type="button" data-note-tab="study">
                         <span class="material-symbols-outlined">format_list_bulleted</span>
-                        Study notes
+                        Apontamentos de estudo
                     </button>
                     <button type="button" data-note-tab="personal">
                         <span class="material-symbols-outlined">format_list_bulleted</span>
-                        Personal notes
+                        Apontamentos pessoais
                     </button>
                     <button type="button" data-note-tab="important">
                         <span class="material-symbols-outlined">format_list_bulleted</span>
-                        Important
+                        Importante
                     </button>
                 </div>
 
                 <div class="note-top-actions">
                     <a class="note-new-button" href="#new-note" data-open-new-note>
-                        New
+                        Novo
                         <span>+</span>
                     </a>
                 </div>
@@ -56,7 +66,7 @@
                 <a class="note-line note-new-line" href="#new-note" data-open-new-note>
                     <span>
                         <span class="material-symbols-outlined">note_add</span>
-                        <strong>New note</strong>
+                        <strong>Novo apontamento</strong>
                     </span>
                     <small></small>
                     <small></small>
@@ -78,7 +88,7 @@
 
                         <div class="note-line-tags">
                             @if ($note->tag)
-                                <span class="note-tag note-tag-{{ $note->tag }}">{{ ucfirst($note->tag) }}</span>
+                                <span class="note-tag note-tag-{{ $note->tag }}">{{ $tagLabels[$note->tag] ?? $note->tag }}</span>
                             @endif
 
                             @if ($note->tag === 'study' && $note->subject)
@@ -86,10 +96,10 @@
                             @endif
                         </div>
 
-                        <time>{{ $note->created_at->format('F j, Y g:i A') }}</time>
+                        <time>{{ $note->created_at->format('d/m/Y H:i') }}</time>
 
                         <details class="note-menu">
-                            <summary aria-label="Open note menu">
+                            <summary aria-label="Abrir menu do apontamento">
                                 <span class="material-symbols-outlined">more_horiz</span>
                             </summary>
 
@@ -97,19 +107,19 @@
                                 <form method="POST" action="{{ route('notes.destroy', $note) }}">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit">Delete</button>
+                                    <button type="submit">Eliminar</button>
                                 </form>
 
-                                <a href="#share-note-{{ $note->id }}">Share to group</a>
+                                <a href="#share-note-{{ $note->id }}">Partilhar no grupo</a>
                             </div>
                         </details>
                     </div>
                 @empty
-                    <p class="note-empty" data-note-empty>No notes yet. Click “New” to start.</p>
+                    <p class="note-empty" data-note-empty>Ainda não há apontamentos. Clica em “Novo” para começar.</p>
                 @endforelse
 
                 @if ($notes->isNotEmpty())
-                    <p class="note-empty" data-note-empty hidden>No notes match this filter.</p>
+                    <p class="note-empty" data-note-empty hidden>Nenhum apontamento corresponde a este filtro.</p>
                 @endif
             </div>
         </div>
@@ -121,35 +131,35 @@
             <input type="hidden" name="opened_at" data-new-note-opened-at>
 
             <div class="note-document-toolbar">
-                <a href="#" class="overlay-close">Close</a>
-                <button type="submit">Save</button>
+                <a href="#" class="overlay-close">Fechar</a>
+                <button type="submit">Guardar</button>
             </div>
 
-            <input class="note-document-title" id="new-note-title" name="title" type="text" placeholder="New page" required>
+            <input class="note-document-title" id="new-note-title" name="title" type="text" placeholder="Nova página" required>
 
             <div class="note-properties">
                 <div class="note-property-row">
                     <span class="material-symbols-outlined">schedule</span>
-                    <label>Created</label>
-                    <p data-new-note-created-text>{{ now()->format('F j, Y g:i A') }}</p>
+                    <label>Criado</label>
+                    <p data-new-note-created-text>{{ now()->format('d/m/Y H:i') }}</p>
                 </div>
 
                 <div class="note-property-row">
                     <span class="material-symbols-outlined">sell</span>
-                    <label for="new-note-tag">Tag</label>
+                    <label for="new-note-tag">Etiqueta</label>
                     <select id="new-note-tag" name="tag" data-note-tag-select>
-                        <option value="">No tag</option>
-                        <option value="study">Study</option>
-                        <option value="personal">Personal</option>
-                        <option value="important">Important</option>
+                        <option value="">Sem etiqueta</option>
+                        <option value="study">Estudar</option>
+                        <option value="personal">Pessoal</option>
+                        <option value="important">Importante</option>
                     </select>
                 </div>
 
                 <div class="note-property-row" data-subject-field hidden>
                     <span class="material-symbols-outlined">school</span>
-                    <label for="new-note-subject">Subject optional</label>
+                    <label for="new-note-subject">Disciplina opcional</label>
                     <select id="new-note-subject" name="subject_id">
-                        <option value="">No subject</option>
+                        <option value="">Sem disciplina</option>
                         @foreach ($subjects as $subject)
                             <option value="{{ $subject->id }}">{{ $subject->name }}</option>
                         @endforeach
@@ -158,12 +168,12 @@
 
                 <div class="note-property-row">
                     <span class="material-symbols-outlined">notes</span>
-                    <label for="new-note-description">Description</label>
-                    <input id="new-note-description" name="description" type="text" placeholder="Small summary">
+                    <label for="new-note-description">Descrição</label>
+                    <input id="new-note-description" name="description" type="text" placeholder="Pequeno resumo">
                 </div>
             </div>
 
-            <textarea class="note-document-body" id="new-note-body" name="body" placeholder="Press enter and start writing..."></textarea>
+            <textarea class="note-document-body" id="new-note-body" name="body" placeholder="Carrega em Enter e começa a escrever..."></textarea>
 
         </form>
     </div>
@@ -175,8 +185,8 @@
                 @method('PATCH')
 
                 <div class="note-document-toolbar">
-                    <a href="#" class="overlay-close">Close</a>
-                    <button type="submit">Save</button>
+                    <a href="#" class="overlay-close">Fechar</a>
+                    <button type="submit">Guardar</button>
                 </div>
 
                 <input class="note-document-title" id="note-title-{{ $note->id }}" name="title" type="text" value="{{ $note->title }}" required>
@@ -184,26 +194,26 @@
                 <div class="note-properties">
                     <div class="note-property-row">
                         <span class="material-symbols-outlined">schedule</span>
-                        <label>Created</label>
-                        <p>{{ $note->created_at->format('F j, Y g:i A') }}</p>
+                        <label>Criado</label>
+                    <p>{{ $note->created_at->format('d/m/Y H:i') }}</p>
                     </div>
 
                     <div class="note-property-row">
                         <span class="material-symbols-outlined">sell</span>
-                        <label for="note-tag-{{ $note->id }}">Tag</label>
+                        <label for="note-tag-{{ $note->id }}">Etiqueta</label>
                         <select id="note-tag-{{ $note->id }}" name="tag" data-note-tag-select>
-                            <option value="">No tag</option>
-                            <option value="study" @selected($note->tag === 'study')>Study</option>
-                            <option value="personal" @selected($note->tag === 'personal')>Personal</option>
-                            <option value="important" @selected($note->tag === 'important')>Important</option>
+                            <option value="">Sem etiqueta</option>
+                            <option value="study" @selected($note->tag === 'study')>Estudar</option>
+                            <option value="personal" @selected($note->tag === 'personal')>Pessoal</option>
+                            <option value="important" @selected($note->tag === 'important')>Importante</option>
                         </select>
                     </div>
 
                     <div class="note-property-row" data-subject-field @if ($note->tag !== 'study') hidden @endif>
                         <span class="material-symbols-outlined">school</span>
-                        <label for="note-subject-{{ $note->id }}">Subject optional</label>
+                        <label for="note-subject-{{ $note->id }}">Disciplina opcional</label>
                         <select id="note-subject-{{ $note->id }}" name="subject_id">
-                            <option value="">No subject</option>
+                            <option value="">Sem disciplina</option>
                             @foreach ($subjects as $subject)
                                 <option value="{{ $subject->id }}" @selected($note->subject_id === $subject->id)>
                                     {{ $subject->name }}
@@ -214,12 +224,12 @@
 
                     <div class="note-property-row">
                         <span class="material-symbols-outlined">notes</span>
-                        <label for="note-description-{{ $note->id }}">Description</label>
-                        <input id="note-description-{{ $note->id }}" name="description" type="text" value="{{ $note->description }}" placeholder="Small summary">
+                        <label for="note-description-{{ $note->id }}">Descrição</label>
+                        <input id="note-description-{{ $note->id }}" name="description" type="text" value="{{ $note->description }}" placeholder="Pequeno resumo">
                     </div>
                 </div>
 
-                <textarea class="note-document-body" id="note-body-{{ $note->id }}" name="body" placeholder="Press enter and start writing...">{{ $note->body }}</textarea>
+                <textarea class="note-document-body" id="note-body-{{ $note->id }}" name="body" placeholder="Carrega em Enter e começa a escrever...">{{ $note->body }}</textarea>
 
             </form>
         </div>
@@ -230,10 +240,10 @@
             <div class="note-share-box">
                 <div class="note-share-top">
                     <div>
-                        <p>Share note</p>
+                        <p>Partilhar apontamento</p>
                         <h2>{{ $note->title }}</h2>
                     </div>
-                    <a href="#">Close</a>
+                    <a href="#">Fechar</a>
                 </div>
 
                 <div class="note-share-list">
@@ -248,10 +258,10 @@
                                 <small>{{ $target['subtitle'] }}</small>
                             </div>
 
-                            <button type="submit">Send</button>
+                            <button type="submit">Enviar</button>
                         </form>
                     @empty
-                        <p class="note-share-empty">You are not in any groups yet.</p>
+                        <p class="note-share-empty">Ainda não estás em nenhum grupo.</p>
                     @endforelse
                 </div>
             </div>
@@ -267,11 +277,11 @@
         var selectedTab = 'all';
 
         function formatNoteDate(date) {
-            return date.toLocaleString('en-US', {
-                month: 'long',
-                day: 'numeric',
+            return date.toLocaleString('pt-PT', {
+                day: '2-digit',
+                month: '2-digit',
                 year: 'numeric',
-                hour: 'numeric',
+                hour: '2-digit',
                 minute: '2-digit'
             });
         }

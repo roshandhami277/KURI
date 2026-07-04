@@ -1,12 +1,14 @@
 @extends('layouts.nav')
 
-@section('title', 'Grades')
+@section('title', 'Notas')
 
 @section('content')
+    <div class="page-cover page-cover-grades" aria-hidden="true"></div>
+
     <div class="page-heading">
-        <p>Progress</p>
-        <h1>Grades</h1>
-        <span>Select a subject, add your grades, and see your progress in the graph.</span>
+        <p>Progresso</p>
+        <h1>Notas</h1>
+        <span>Escolhe uma disciplina, adiciona as tuas notas e vê o progresso no gráfico.</span>
     </div>
 
     @if ($errors->any())
@@ -19,19 +21,19 @@
 
     @if ($subjects->isEmpty())
         <section class="empty-card">
-            <strong>No subjects found</strong>
-            <p>Your course does not have subjects connected yet. Add them in <code>DatabaseSeeder.php</code> and run <code>php artisan db:seed</code>.</p>
+            <strong>Nenhuma disciplina encontrada</strong>
+            <p>O teu curso ainda não tem disciplinas ligadas. Adiciona-as no DatabaseSeeder.php e executa php artisan db:seed.</p>
         </section>
     @else
         <section class="grades-layout">
             <div class="grade-graph-card">
                 <div class="grade-card-top">
                     <div>
-                        <p>Graph</p>
-                        <h2>Subject progress</h2>
+                        <p>Gráfico</p>
+                        <h2>Progresso da disciplina</h2>
                     </div>
 
-                    <select data-graph-select aria-label="Choose graph subject">
+                    <select data-graph-select aria-label="Escolher disciplina do gráfico">
                         @foreach ($subjects as $subject)
                             <option value="{{ $subject->id }}" @selected($selectedSubjectId === $subject->id)>
                                 {{ $subject->name }}
@@ -48,7 +50,7 @@
 
                         <div class="grade-chart-panel" data-graph-panel="{{ $subject->id }}" @if ($selectedSubjectId !== $subject->id) hidden @endif>
                             @if (count($graphPoints) > 0)
-                                <svg viewBox="0 0 820 330" role="img" aria-label="Grades graph for {{ $subject->name }}">
+                                <svg viewBox="0 0 820 330" role="img" aria-label="Gráfico de notas de {{ $subject->name }}">
                                     <line x1="42" y1="14" x2="42" y2="298" />
                                     <line x1="42" y1="298" x2="796" y2="298" />
 
@@ -69,7 +71,7 @@
                                     @endforeach
                                 </svg>
                             @else
-                                <p class="grade-empty-text">No grades for this subject yet.</p>
+                                <p class="grade-empty-text">Ainda não há notas para esta disciplina.</p>
                             @endif
                         </div>
                     @endforeach
@@ -77,13 +79,19 @@
             </div>
 
             <aside class="add-grade-card">
-                <p>Add grade</p>
-                <h2>New grade</h2>
+                <div class="grade-form-top">
+                    <div>
+                        <p>Adicionar nota</p>
+                        <h2>Nova nota</h2>
+                    </div>
+
+                    <span class="material-symbols-outlined">add_chart</span>
+                </div>
 
                 <form method="POST" action="{{ route('grades.store') }}">
                     @csrf
 
-                    <label for="grade-subject">Subject</label>
+                    <label for="grade-subject">Disciplina</label>
                     <select id="grade-subject" name="subject_id" required>
                         @foreach ($subjects as $subject)
                             <option value="{{ $subject->id }}" @selected($selectedSubjectId === $subject->id)>
@@ -92,25 +100,25 @@
                         @endforeach
                     </select>
 
-                    <label for="grade-title">Title</label>
-                    <input id="grade-title" name="title" type="text" placeholder="Example: First test">
+                    <label for="grade-title">Título</label>
+                    <input id="grade-title" name="title" type="text" placeholder="Exemplo: primeiro teste">
 
                     <div class="grade-small-row">
                         <div>
-                            <label for="grade-value">Grade</label>
+                            <label for="grade-value">Nota</label>
                             <input id="grade-value" name="grade" type="number" min="0" max="20" step="0.01" placeholder="0 - 20" required>
                         </div>
 
                         <div>
-                            <label for="grade-date">Date</label>
+                            <label for="grade-date">Data</label>
                             <input id="grade-date" name="grade_date" type="date">
                         </div>
                     </div>
 
-                    <label for="grade-notes">Notes</label>
-                    <textarea id="grade-notes" name="notes" placeholder="Optional small note"></textarea>
+                    <label for="grade-notes">Apontamentos</label>
+                    <textarea id="grade-notes" name="notes" placeholder="Pequena nota opcional"></textarea>
 
-                    <button type="submit">Add grade</button>
+                    <button type="submit">Adicionar nota</button>
                 </form>
             </aside>
         </section>
@@ -118,13 +126,13 @@
         <section class="grades-list-card">
             <div class="grade-card-top">
                 <div>
-                    <p>Recent grades</p>
-                    <h2>Recent grades</h2>
+                    <p>Notas recentes</p>
+                    <h2>Notas recentes</h2>
                 </div>
 
                 <div class="grades-list-tools">
-                    <select data-recent-select aria-label="Filter recent grades">
-                        <option value="all" @selected($recentSubjectId === 'all')>All subjects</option>
+                    <select data-recent-select aria-label="Filtrar notas recentes">
+                        <option value="all" @selected($recentSubjectId === 'all')>Todas as disciplinas</option>
                         @foreach ($subjects as $subject)
                             <option value="{{ $subject->id }}" @selected((string) $recentSubjectId === (string) $subject->id)>
                                 {{ $subject->name }}
@@ -132,7 +140,7 @@
                         @endforeach
                     </select>
 
-                    <strong>Average: <span data-average-text>{{ $average ? number_format($average, 2) : '0.00' }}</span>/20</strong>
+                    <strong>Média: <span data-average-text>{{ $average ? number_format($average, 2) : '0.00' }}</span>/20</strong>
 
                 </div>
             </div>
@@ -141,12 +149,12 @@
                 <table class="grades-table">
                     <thead>
                         <tr>
-                            <th>Subject</th>
-                            <th>Title</th>
-                            <th>Grade</th>
-                            <th>Date</th>
-                            <th>Notes</th>
-                            <th class="grade-actions-column">Action</th>
+                            <th>Disciplina</th>
+                            <th>Título</th>
+                            <th>Nota</th>
+                            <th>Data</th>
+                            <th>Apontamentos</th>
+                            <th class="grade-actions-column">Ação</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -159,17 +167,17 @@
                                 <td>{{ $grade->notes ?: '-' }}</td>
                                 <td class="grade-actions-column">
                                     <details class="grade-row-menu">
-                                        <summary aria-label="Open grade menu">
+                                        <summary aria-label="Abrir menu da nota">
                                             <span class="material-symbols-outlined">more_horiz</span>
                                         </summary>
 
                                         <div>
-                                            <a href="#edit-grade-{{ $grade->id }}">Edit</a>
+                                            <a href="#edit-grade-{{ $grade->id }}">Editar</a>
 
                                             <form method="POST" action="{{ route('grades.destroy', $grade) }}">
                                                 @csrf
                                                 @method('DELETE')
-                                                <button type="submit">Delete</button>
+                                                <button type="submit">Eliminar</button>
                                             </form>
                                         </div>
                                     </details>
@@ -178,7 +186,7 @@
                         @endforeach
 
                         <tr data-empty-row @if ($recentGrades->isNotEmpty()) hidden @endif>
-                            <td colspan="6">No grades for this subject yet.</td>
+                            <td colspan="6">Ainda não há notas para esta disciplina.</td>
                         </tr>
                     </tbody>
                 </table>
@@ -193,14 +201,14 @@
 
                     <div class="event-form-top">
                         <div>
-                            <p>Edit grade</p>
+                            <p>Editar nota</p>
                             <h2>{{ $grade->subject->name }}</h2>
                         </div>
 
                         <a class="overlay-close" href="#">×</a>
                     </div>
 
-                    <label for="edit-subject-{{ $grade->id }}">Subject</label>
+                    <label for="edit-subject-{{ $grade->id }}">Disciplina</label>
                     <select id="edit-subject-{{ $grade->id }}" name="subject_id" required>
                         @foreach ($subjects as $subject)
                             <option value="{{ $subject->id }}" @selected($grade->subject_id === $subject->id)>
@@ -209,25 +217,25 @@
                         @endforeach
                     </select>
 
-                    <label for="edit-title-{{ $grade->id }}">Title</label>
-                    <input id="edit-title-{{ $grade->id }}" name="title" type="text" value="{{ $grade->title }}" placeholder="Example: First test">
+                    <label for="edit-title-{{ $grade->id }}">Título</label>
+                    <input id="edit-title-{{ $grade->id }}" name="title" type="text" value="{{ $grade->title }}" placeholder="Exemplo: primeiro teste">
 
                     <div class="grade-small-row">
                         <div>
-                            <label for="edit-grade-amount-{{ $grade->id }}">Grade</label>
+                            <label for="edit-grade-amount-{{ $grade->id }}">Nota</label>
                             <input id="edit-grade-amount-{{ $grade->id }}" name="grade" type="number" min="0" max="20" step="0.01" value="{{ $grade->grade }}" required>
                         </div>
 
                         <div>
-                            <label for="edit-date-{{ $grade->id }}">Date</label>
+                            <label for="edit-date-{{ $grade->id }}">Data</label>
                             <input id="edit-date-{{ $grade->id }}" name="grade_date" type="date" value="{{ $grade->grade_date?->format('Y-m-d') }}">
                         </div>
                     </div>
 
-                    <label for="edit-notes-{{ $grade->id }}">Notes</label>
-                    <textarea id="edit-notes-{{ $grade->id }}" name="notes" placeholder="Optional small note">{{ $grade->notes }}</textarea>
+                    <label for="edit-notes-{{ $grade->id }}">Apontamentos</label>
+                    <textarea id="edit-notes-{{ $grade->id }}" name="notes" placeholder="Pequena nota opcional">{{ $grade->notes }}</textarea>
 
-                    <button type="submit">Save changes</button>
+                    <button type="submit">Guardar alterações</button>
                 </form>
             </div>
         @endforeach

@@ -1,12 +1,20 @@
 @extends('layouts.nav')
 
-@section('title', 'Daily tasks')
+@section('title', 'Tarefas diárias')
 
 @section('content')
+    @php
+        $totalTasks = $tasks->count();
+        $completedTasks = $tasks->whereNotNull('completed_at')->count();
+        $progress = $totalTasks > 0 ? round(($completedTasks / $totalTasks) * 100) : 0;
+    @endphp
+
+    <div class="page-cover page-cover-tasks" aria-hidden="true"></div>
+
     <div class="page-heading">
-        <p>Daily planner</p>
-        <h1>Daily tasks</h1>
-        <span>Write a task, press Enter, and it becomes a checkbox.</span>
+        <p>Planeador diário</p>
+        <h1>Tarefas diárias</h1>
+        <span>Escreve uma tarefa, carrega em Enter, e ela torna-se uma checkbox.</span>
     </div>
 
     @if ($errors->any())
@@ -17,28 +25,65 @@
         </div>
     @endif
 
-    <section class="single-todo-card">
-        <h2>Today's to-do list</h2>
+    <section class="daily-task-layout">
+        <section class="single-todo-card">
+            <div class="todo-card-top">
+                <div>
+                    <p>Lista</p>
+                    <h2>Lista de tarefas de hoje</h2>
+                </div>
 
-        {{-- $tasks comes from DailyTaskController@index. Each task is one row from daily_tasks. --}}
-        <div class="todo-lines" data-task-list>
-            @foreach ($tasks as $task)
-                <label
-                    class="todo-line"
-                    {{-- These URLs are used by JavaScript when the user edits, ticks, or deletes a task. --}}
-                    data-update-url="{{ route('tasks.update', $task) }}"
-                    data-toggle-url="{{ route('tasks.toggle', $task) }}"
-                    data-delete-url="{{ route('tasks.destroy', $task) }}"
-                >
-                    <input type="checkbox" @checked($task->completed_at)>
-                    <input type="text" value="{{ $task->title }}">
-                </label>
-            @endforeach
-        </div>
+                <span data-task-counter>{{ $completedTasks }}/{{ $totalTasks }}</span>
+            </div>
 
-        <label class="writing-line">
-            <input type="text" placeholder="Write a task and press Enter" data-new-task>
-        </label>
+            {{-- $tasks comes from DailyTaskController@index. Each task is one row from daily_tasks. --}}
+            <div class="todo-lines" data-task-list>
+                @foreach ($tasks as $task)
+                    <label
+                        class="todo-line"
+                        {{-- These URLs are used by JavaScript when the user edits, ticks, or deletes a task. --}}
+                        data-update-url="{{ route('tasks.update', $task) }}"
+                        data-toggle-url="{{ route('tasks.toggle', $task) }}"
+                        data-delete-url="{{ route('tasks.destroy', $task) }}"
+                    >
+                        <input type="checkbox" @checked($task->completed_at)>
+                        <input type="text" value="{{ $task->title }}">
+                    </label>
+                @endforeach
+            </div>
+
+            <label class="writing-line">
+                <input type="text" placeholder="Escreve uma tarefa e carrega em Enter" data-new-task>
+            </label>
+        </section>
+
+        <aside class="daily-side-card">
+            <div class="daily-date-box">
+                <p>Hoje</p>
+                <strong>{{ $selectedDate->format('d M') }}</strong>
+                <span>{{ $selectedDate->format('l') }}</span>
+            </div>
+
+            <div class="daily-progress-box" style="--progress: {{ $progress }}%;" data-progress-box>
+                <div>
+                    <span>Progresso</span>
+                    <strong data-progress-number>{{ $progress }}%</strong>
+                </div>
+
+                <div class="daily-progress-bar">
+                    <span></span>
+                </div>
+            </div>
+
+            <div class="daily-tip-box">
+                <p>Pequeno plano</p>
+                <ul>
+                    <li>Começa pela tarefa mais fácil.</li>
+                    <li>Mantém tarefas escolares e pessoais juntas.</li>
+                    <li>Elimina uma tarefa apagando o texto e carregando em Backspace.</li>
+                </ul>
+            </div>
+        </aside>
     </section>
 
     <script>
@@ -48,9 +93,33 @@
         // This is the empty input at the bottom where the user writes a new task.
         const newTaskInput = document.querySelector('[data-new-task]');
 
+        // These elements show the small progress numbers on the page.
+        const taskCounter = document.querySelector('[data-task-counter]');
+        const progressBox = document.querySelector('[data-progress-box]');
+        const progressNumber = document.querySelector('[data-progress-number]');
+
         // Laravel needs this token for POST/PATCH/DELETE requests.
         // It proves the request came from our own page.
         const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
+
+        function updateDailyProgress() {
+            // Count all saved task lines currently visible on the page.
+            const taskLines = taskList.querySelectorAll('.todo-line');
+            const total = taskLines.length;
+
+            // Count only the task lines with a checked checkbox.
+            const completed = taskList.querySelectorAll('.todo-line input[type="checkbox"]:checked').length;
+
+            // Avoid division by zero when there are no tasks.
+            const progress = total > 0 ? Math.round((completed / total) * 100) : 0;
+
+            // Update the small "0/0" text near the title.
+            taskCounter.textContent = completed + '/' + total;
+
+            // Update the percentage text and the black progress bar.
+            progressNumber.textContent = progress + '%';
+            progressBox.style.setProperty('--progress', progress + '%');
+        }
 
         function createTaskLine(task) {
             // JavaScript creates the same HTML structure that Blade uses for saved tasks.
@@ -71,6 +140,7 @@
 
             // Add the new line to the visible list without reloading the whole page.
             taskList.appendChild(line);
+            updateDailyProgress();
         }
 
         function deleteTaskLine(line) {
@@ -83,6 +153,7 @@
             }).then(function () {
                 // Remove the task from the page after Laravel deletes it from the database.
                 line.remove();
+                updateDailyProgress();
                 newTaskInput.focus();
             });
         }
@@ -166,6 +237,8 @@
                     'Accept': 'application/json',
                     'X-CSRF-TOKEN': csrfToken,
                 },
+            }).then(function () {
+                updateDailyProgress();
             });
         });
 

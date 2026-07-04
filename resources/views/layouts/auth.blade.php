@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -13,7 +13,9 @@
     {{-- This layout is shared by both authentication pages. --}}
     <header class="site-header">
         <a class="brand" href="{{ route('home') }}">Kuri</a>
-        @yield('header-link')
+        <div class="header-right">
+            @yield('header-link')
+        </div>
     </header>
 
     <main class="auth-page">

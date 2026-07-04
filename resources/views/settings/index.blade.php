@@ -1,12 +1,12 @@
 @extends('layouts.nav')
 
-@section('title', 'Settings')
+@section('title', 'Definições')
 
 @section('content')
     <div class="page-heading">
-        <p>Your account</p>
-        <h1>Settings</h1>
-        <span>You can change your name and password here. Important school information stays locked.</span>
+        <p>A tua conta</p>
+        <h1>Definições</h1>
+        <span>Podes alterar o teu nome e palavra-passe aqui. A informação escolar importante fica bloqueada.</span>
     </div>
 
     @if (session('success'))
@@ -26,47 +26,47 @@
             @csrf
             @method('PUT')
 
-            <label for="name">Name</label>
+            <label for="name">Nome</label>
             <input id="name" name="name" type="text" value="{{ old('name', $user->name) }}" required>
 
             <label for="email">Email</label>
             <input id="email" type="email" value="{{ $user->email }}" disabled>
 
-            <label for="role">Account type</label>
+            <label for="role">Tipo de conta</label>
             <input id="role" type="text" value="{{ ucfirst($user->role) }}" disabled>
 
             @if ($user->isStudent() || $user->isTeacher())
                 {{-- Students and teachers belong to a course group, so we show it here but keep it locked. --}}
-                <label for="course">Course</label>
-                <input id="course" type="text" value="{{ $user->course?->name ?? 'Not selected' }}" disabled>
+                <label for="course">Curso</label>
+                <input id="course" type="text" value="{{ $user->course?->name ?? 'Não selecionado' }}" disabled>
 
-                <label for="school_class">Class</label>
-                <input id="school_class" type="text" value="{{ $user->schoolClass?->name ?? 'Not selected' }}" disabled>
+                <label for="school_class">Turma</label>
+                <input id="school_class" type="text" value="{{ $user->schoolClass?->name ?? 'Não selecionado' }}" disabled>
             @else
                 {{-- Admin accounts control the app, so they do not need a course or class. --}}
                 <p class="small-link">
-                    Admin accounts do not belong to one course or class.
+                    As contas de administrador não pertencem a um curso ou turma.
                 </p>
             @endif
 
-            <label for="password">New password</label>
-            <input id="password" name="password" type="password" placeholder="Leave empty to keep current password">
+            <label for="password">Nova palavra-passe</label>
+            <input id="password" name="password" type="password" placeholder="Deixa vazio para manter a palavra-passe atual">
 
-            <label for="password_confirmation">Confirm password</label>
-            <input id="password_confirmation" name="password_confirmation" type="password" placeholder="Repeat the new password">
+            <label for="password_confirmation">Confirmar palavra-passe</label>
+            <input id="password_confirmation" name="password_confirmation" type="password" placeholder="Repete a nova palavra-passe">
 
-            <button type="submit">Save settings</button>
+            <button type="submit">Guardar definições</button>
         </form>
 
         @if ($user->isStudent() || $user->isTeacher())
             <p class="small-link">
-                Need to change email, course, class, or account type?
-                <a href="mailto:example@ael.edu.pt?subject=Kuri account change">Send an email</a>.
+                Precisas de mudar o email, curso, turma ou tipo de conta?
+                <a href="mailto:example@ael.edu.pt?subject=Kuri account change">Enviar email</a>.
             </p>
         @else
             <p class="small-link">
-                Need to change email or account type?
-                <a href="mailto:example@ael.edu.pt?subject=Kuri admin account change">Send an email</a>.
+                Precisas de mudar o email ou o tipo de conta?
+                <a href="mailto:example@ael.edu.pt?subject=Kuri admin account change">Enviar email</a>.
             </p>
         @endif
     </section>

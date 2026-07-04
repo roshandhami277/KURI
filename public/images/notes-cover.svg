@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 420" preserveAspectRatio="xMidYMid slice">
+    <defs>
+        <linearGradient id="paper" x1="0" x2="1" y1="0" y2="1">
+            <stop offset="0" stop-color="#fafafa"/>
+            <stop offset="0.45" stop-color="#eeeeeb"/>
+            <stop offset="1" stop-color="#d8d8d3"/>
+        </linearGradient>
+
+        <pattern id="softDots" width="34" height="34" patternUnits="userSpaceOnUse">
+            <circle cx="5" cy="6" r="1.2" fill="#1d1d1d" opacity="0.16"/>
+        </pattern>
+    </defs>
+
+    <rect width="1600" height="420" fill="url(#paper)"/>
+    <rect width="1600" height="420" fill="url(#softDots)" opacity="0.55"/>
+
+    <g opacity="0.95">
+        <path d="M-80 330 C180 190 370 430 620 260 C860 96 1020 330 1230 205 C1395 107 1510 142 1680 58"
+              fill="none" stroke="#1d1d1d" stroke-width="34" stroke-linecap="round" opacity="0.13"/>
+        <path d="M-60 385 C210 254 412 465 642 314 C900 144 1055 375 1285 242 C1455 144 1548 176 1690 104"
+              fill="none" stroke="#1d1d1d" stroke-width="8" stroke-linecap="round" opacity="0.28"/>
+    </g>
+
+    <g transform="translate(138 86) rotate(-7)">
+        <rect x="0" y="0" width="210" height="250" rx="12" fill="#ffffff" opacity="0.92"/>
+        <rect x="28" y="42" width="118" height="10" rx="5" fill="#1d1d1d" opacity="0.28"/>
+        <rect x="28" y="75" width="154" height="7" rx="4" fill="#1d1d1d" opacity="0.18"/>
+        <rect x="28" y="102" width="136" height="7" rx="4" fill="#1d1d1d" opacity="0.18"/>
+        <rect x="28" y="129" width="158" height="7" rx="4" fill="#1d1d1d" opacity="0.18"/>
+        <rect x="28" y="156" width="120" height="7" rx="4" fill="#1d1d1d" opacity="0.18"/>
+        <path d="M0 14 C42 40 58 38 96 15 C142 -13 174 -3 210 22 L210 250 L0 250 Z"
+              fill="#1d1d1d" opacity="0.05"/>
+    </g>
+
+    <g transform="translate(1030 72) rotate(9)">
+        <rect x="0" y="0" width="260" height="285" rx="18" fill="#1d1d1d" opacity="0.92"/>
+        <rect x="38" y="48" width="112" height="13" rx="6.5" fill="#ffffff" opacity="0.88"/>
+        <rect x="38" y="92" width="184" height="8" rx="4" fill="#ffffff" opacity="0.26"/>
+        <rect x="38" y="124" width="160" height="8" rx="4" fill="#ffffff" opacity="0.26"/>
+        <rect x="38" y="156" width="188" height="8" rx="4" fill="#ffffff" opacity="0.26"/>
+        <rect x="38" y="188" width="132" height="8" rx="4" fill="#ffffff" opacity="0.26"/>
+        <circle cx="210" cy="54" r="17" fill="#ffffff" opacity="0.2"/>
+    </g>
+
+    <g fill="none" stroke="#1d1d1d" stroke-linecap="round" opacity="0.28">
+        <path d="M520 95 h225"/>
+        <path d="M520 132 h164"/>
+        <path d="M520 169 h238"/>
+        <path d="M520 206 h190"/>
+        <path d="M760 268 h270"/>
+        <path d="M760 305 h180"/>
+    </g>
+</svg>
