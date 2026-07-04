@@ -30,8 +30,8 @@ class SettingsController extends Controller
             $data['password'] = $validated['password'];
         }
 
-        // Students can change their display name and password.
-        // Email, course, and class are locked because they affect school identity.
+        // Every user can change only their own name and password.
+        // Email, role, course, and class stay locked because they decide account access.
         $request->user()->update($data);
 
         return redirect()->route('settings')->with('success', 'Settings updated.');

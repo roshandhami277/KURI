@@ -34,7 +34,11 @@ class LoginController extends Controller
         // A new session ID protects the account from session fixation attacks.
         $request->session()->regenerate();
 
-        return redirect()->intended(route('dashboard'));
+        $homePage = $request->user()->isAdmin()
+            ? route('admin.index')
+            : route('dashboard');
+
+        return redirect()->intended($homePage);
     }
 
     // Log the user out and safely remove their old session.

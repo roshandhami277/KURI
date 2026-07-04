@@ -29,7 +29,8 @@ class RegisterController extends Controller
     // Validate the form, create the account, and log the new user in.
     public function store(Request $request): RedirectResponse
     {
-        $role = str_contains(strtolower($request->email), '@alunos.') ? 'student' : 'teacher';
+        $email = strtolower((string) $request->input('email'));
+        $role = str_contains($email, '@alunos.') ? 'student' : 'teacher';
 
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:100'],
@@ -49,30 +50,23 @@ class RegisterController extends Controller
             ],
             'password' => ['required', 'confirmed', 'min:5'],
             'course_id' => [
-                Rule::requiredIf($role === 'student'),
-                'nullable',
+                'required',
                 Rule::exists('courses', 'id')->where('is_active', true),
             ],
             'school_class_id' => [
-                Rule::requiredIf($role === 'student'),
-                'nullable',
+                'required',
                 Rule::exists('school_classes', 'id')->where('is_active', true),
             ],
         ], [
             'email.regex' => 'Please use your correct school email.',
-            'course_id.required' => 'Students must choose a course.',
-            'school_class_id.required' => 'Students must choose a class.',
+            'course_id.required' => 'Choose the course you belong to.',
+            'school_class_id.required' => 'Choose your class or DT group.',
         ]);
 
         // Students are detected by @alunos.ael.edu.pt.
         // Teachers use a normal @ael.edu.pt email.
         // Admins are not created by the public register form; you can promote them later.
         $validated['role'] = $role;
-
-        if ($role === 'teacher') {
-            $validated['course_id'] = null;
-            $validated['school_class_id'] = null;
-        }
 
         // The User model automatically hashes the password before saving it.
         $user = User::create($validated);

@@ -47,6 +47,22 @@ a {
     text-decoration: none;
 }
 
+.header-actions {
+    display: flex;
+    gap: 18px;
+    align-items: center;
+}
+
+.header-actions a {
+    color: var(--grey);
+    font-size: 12px;
+    text-decoration: none;
+}
+
+.header-actions a:hover {
+    color: var(--black);
+}
+
 .auth-page {
     display: grid;
     place-items: center;

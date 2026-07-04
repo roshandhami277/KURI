@@ -11,7 +11,7 @@
         <p class="eyebrow">New account</p>
         <h1>Register</h1>
         <p class="introduction">Use your AEL school email to create your Kuri account.</p>
-        <p class="warning-text">Student emails create student accounts. Teacher emails create teacher accounts.</p>
+        <p class="warning-text">Student emails create student accounts. Teacher emails create teacher accounts. Teachers should choose their DT course and class group.</p>
 
         <form method="POST" action="{{ route('register.store') }}">
             @csrf
@@ -41,7 +41,7 @@
                 <p class="error">{{ $message }}</p>
             @enderror
 
-            <label for="school_class_id">Class</label>
+            <label for="school_class_id">Class / group</label>
             <select id="school_class_id" name="school_class_id">
                 <option value="">Choose your class</option>
                 @foreach ($schoolClasses as $schoolClass)
