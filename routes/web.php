@@ -75,6 +75,8 @@ Route::middleware('auth')->group(function () {
     Route::middleware('role:student,teacher')->group(function () {
         Route::get('/notes', [NoteController::class, 'index'])->name('notes');
         Route::post('/notes', [NoteController::class, 'store'])->name('notes.store');
+        Route::post('/notes/{note}/share', [NoteController::class, 'share'])->name('notes.share');
+        Route::post('/notes/{note}/copy', [NoteController::class, 'copy'])->name('notes.copy');
         Route::patch('/notes/{note}', [NoteController::class, 'update'])->name('notes.update');
         Route::delete('/notes/{note}', [NoteController::class, 'destroy'])->name('notes.destroy');
     });

@@ -23,7 +23,7 @@ class ChatController extends Controller
         $selectedGroup = $groups->firstWhere('id', (int) $request->query('group'));
 
         if ($selectedGroup) {
-            $messages = ChatMessage::with('sender')
+            $messages = ChatMessage::with(['sender', 'sharedNote.subject'])
                 ->where('chat_group_id', $selectedGroup->id)
                 ->orderBy('created_at')
                 ->get();
@@ -37,7 +37,7 @@ class ChatController extends Controller
             $members = $this->addAdminsToMembers($members);
         } else {
             $messages = $course
-                ? ChatMessage::with('sender')
+                ? ChatMessage::with(['sender', 'sharedNote.subject'])
                     ->where('course_id', $course->id)
                     ->whereNull('chat_group_id')
                     ->orderBy('created_at')

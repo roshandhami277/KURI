@@ -184,7 +184,15 @@
                             @endunless
 
                             <div @class(['chat-bubble', 'mine' => $isMine])>
-                                @if ($message->body)
+                                @if ($message->sharedNote)
+                                    <button class="chat-shared-note-card" type="button" data-open-shared-note="shared-note-{{ $message->id }}">
+                                        <span class="material-symbols-outlined">description</span>
+                                        <div>
+                                            <strong>{{ $message->sharedNote->title }}</strong>
+                                            <small>Click to preview note</small>
+                                        </div>
+                                    </button>
+                                @elseif ($message->body)
                                     <p>{{ $message->body }}</p>
                                 @endif
 
@@ -264,6 +272,57 @@
 
     <div id="chat-overlays">
         @foreach ($messages as $message)
+            @if ($message->sharedNote)
+                <div id="shared-note-{{ $message->id }}" class="chat-note-preview-layer">
+                    <div class="chat-note-preview-box">
+                        <div class="chat-note-preview-top">
+                            <strong>Shared note preview</strong>
+                            <button type="button" data-close-shared-note>Close</button>
+                        </div>
+
+                        <div class="chat-note-preview-title">
+                            <h2>{{ $message->sharedNote->title }}</h2>
+
+                            <div>
+                                @if ($message->sharedNote->tag)
+                                    <span @class(['note-tag', 'note-tag-'.$message->sharedNote->tag])>
+                                        {{ ucfirst($message->sharedNote->tag) }}
+                                    </span>
+                                @endif
+
+                                @if ($message->sharedNote->subject)
+                                    <span class="note-subject-tag">{{ $message->sharedNote->subject->name }}</span>
+                                @endif
+                            </div>
+                        </div>
+
+                        @if ($message->sharedNote->description)
+                            <p class="chat-note-preview-description">{{ $message->sharedNote->description }}</p>
+                        @endif
+
+                        <div class="chat-note-preview-body">{{ trim($message->sharedNote->body ?: 'This note has no body yet.') }}</div>
+
+                        <div class="chat-note-preview-actions">
+                            @if ($message->sharedNote->user_id === auth()->id())
+                                <a class="chat-note-preview-button" href="{{ route('notes') }}#note-{{ $message->sharedNote->id }}">
+                                    Open my note
+                                </a>
+                            @elseif ($user->isAdmin())
+                                <p class="chat-note-preview-admin-text">Admins can preview shared notes, but only students and teachers save notes.</p>
+                            @else
+                                <form method="POST" action="{{ route('notes.copy', $message->sharedNote) }}">
+                                    @csrf
+
+                                    <button class="chat-note-preview-button" type="submit">
+                                        Save to my notes
+                                    </button>
+                                </form>
+                            @endif
+                        </div>
+                    </div>
+                </div>
+            @endif
+
             @if ($message->sender_id === auth()->id())
                 <div id="edit-message-{{ $message->id }}" class="chat-edit-overlay">
                     <form class="chat-edit-box" method="POST" action="{{ route('chat.update', $message) }}">
@@ -332,6 +391,24 @@
         document.addEventListener('click', function (event) {
             const chatLink = event.target.closest('[data-chat-link]');
             const studentButton = event.target.closest('[data-student-email]');
+            const sharedNoteButton = event.target.closest('[data-open-shared-note]');
+            const closeSharedNoteButton = event.target.closest('[data-close-shared-note]');
+
+            if (event.target.classList.contains('chat-note-preview-layer')) {
+                event.target.classList.remove('open');
+            }
+
+            if (sharedNoteButton) {
+                const preview = document.getElementById(sharedNoteButton.dataset.openSharedNote);
+
+                if (preview) {
+                    preview.classList.add('open');
+                }
+            }
+
+            if (closeSharedNoteButton) {
+                closeSharedNoteButton.closest('.chat-note-preview-layer').classList.remove('open');
+            }
 
             if (chatLink) {
                 event.preventDefault();

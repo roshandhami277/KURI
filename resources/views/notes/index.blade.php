@@ -7,6 +7,7 @@
         <p>Study notes</p>
         <h1>Notes</h1>
         <span>Write private documents, organize them with simple tags, and open each note like a small workspace.</span>
+        <small class="note-open-hint">Click a note row to open it. Change anything, then press Save at the top.</small>
     </div>
 
     @if ($errors->any())
@@ -15,6 +16,10 @@
                 <p>{{ $error }}</p>
             @endforeach
         </div>
+    @endif
+
+    @if (session('success'))
+        <p class="success-message">{{ session('success') }}</p>
     @endif
 
     <section class="notes-page">
@@ -62,6 +67,7 @@
                     <div
                         class="note-line"
                         data-note-row
+                        data-open-note="#note-{{ $note->id }}"
                         data-note-tag="{{ strtolower($note->tag ?? '') }}"
                         data-note-date="{{ $note->created_at->format('Y-m-d') }}"
                     >
@@ -94,7 +100,7 @@
                                     <button type="submit">Delete</button>
                                 </form>
 
-                                <button type="button" disabled>Share to group</button>
+                                <a href="#share-note-{{ $note->id }}">Share to group</a>
                             </div>
                         </details>
                     </div>
@@ -115,7 +121,8 @@
             <input type="hidden" name="opened_at" data-new-note-opened-at>
 
             <div class="note-document-toolbar">
-                <a href="#" class="overlay-close">×</a>
+                <a href="#" class="overlay-close">Close</a>
+                <button type="submit">Save</button>
             </div>
 
             <input class="note-document-title" id="new-note-title" name="title" type="text" placeholder="New page" required>
@@ -158,7 +165,6 @@
 
             <textarea class="note-document-body" id="new-note-body" name="body" placeholder="Press enter and start writing..."></textarea>
 
-            <button type="submit">Save</button>
         </form>
     </div>
 
@@ -169,7 +175,8 @@
                 @method('PATCH')
 
                 <div class="note-document-toolbar">
-                    <a href="#" class="overlay-close">×</a>
+                    <a href="#" class="overlay-close">Close</a>
+                    <button type="submit">Save</button>
                 </div>
 
                 <input class="note-document-title" id="note-title-{{ $note->id }}" name="title" type="text" value="{{ $note->title }}" required>
@@ -214,8 +221,40 @@
 
                 <textarea class="note-document-body" id="note-body-{{ $note->id }}" name="body" placeholder="Press enter and start writing...">{{ $note->body }}</textarea>
 
-                <button type="submit">Save</button>
             </form>
+        </div>
+    @endforeach
+
+    @foreach ($notes as $note)
+        <div id="share-note-{{ $note->id }}" class="note-share-layer">
+            <div class="note-share-box">
+                <div class="note-share-top">
+                    <div>
+                        <p>Share note</p>
+                        <h2>{{ $note->title }}</h2>
+                    </div>
+                    <a href="#">Close</a>
+                </div>
+
+                <div class="note-share-list">
+                    @forelse ($shareTargets as $target)
+                        <form class="note-share-row" method="POST" action="{{ route('notes.share', $note) }}">
+                            @csrf
+                            <input type="hidden" name="target_type" value="{{ $target['type'] }}">
+                            <input type="hidden" name="target_id" value="{{ $target['id'] }}">
+
+                            <div>
+                                <strong>{{ $target['name'] }}</strong>
+                                <small>{{ $target['subtitle'] }}</small>
+                            </div>
+
+                            <button type="submit">Send</button>
+                        </form>
+                    @empty
+                        <p class="note-share-empty">You are not in any groups yet.</p>
+                    @endforelse
+                </div>
+            </div>
         </div>
     @endforeach
 
@@ -248,6 +287,16 @@
                 if (newNoteCreatedText) {
                     newNoteCreatedText.textContent = formatNoteDate(clickedAt);
                 }
+            });
+        });
+
+        document.querySelectorAll('[data-open-note]').forEach(function (row) {
+            row.addEventListener('click', function (event) {
+                if (event.target.closest('a, button, form, details, summary')) {
+                    return;
+                }
+
+                window.location.hash = row.dataset.openNote;
             });
         });
 
