@@ -155,9 +155,6 @@
                                             <p>{{ $event->notes }}</p>
                                         @endif
 
-                                        @if ($event->reminder_enabled)
-                                            <p>Email de lembrete às {{ substr($event->reminder_time, 0, 5) }}</p>
-                                        @endif
                                     </div>
 
                                     <div class="timeline-actions">
@@ -219,22 +216,12 @@
 
                             <label for="event-end-time">
                                 Fim
-                                <input id="event-end-time" name="end_time" type="time">
+                                <input id="event-end-time" name="end_time" type="time" min="{{ $formStartTime }}">
                             </label>
                         </div>
 
                         <label for="event-notes">Apontamentos</label>
                         <textarea id="event-notes" name="notes" placeholder="Pequenos detalhes"></textarea>
-
-                        <label class="reminder-toggle-row">
-                            <input class="reminder-toggle" name="reminder_enabled" type="checkbox" value="1">
-                            Enviar um lembrete por email mais tarde
-                        </label>
-
-                        <div class="reminder-time-field">
-                            <label for="event-reminder-time">Hora do lembrete</label>
-                            <input id="event-reminder-time" name="reminder_time" type="time">
-                        </div>
 
                         <button type="submit">Adicionar evento</button>
                     </form>
@@ -276,22 +263,12 @@
 
                     <label for="event-end-time-{{ $event->id }}">
                         Fim
-                        <input id="event-end-time-{{ $event->id }}" name="end_time" type="time" value="{{ $event->end_time ? substr($event->end_time, 0, 5) : '' }}">
+                        <input id="event-end-time-{{ $event->id }}" name="end_time" type="time" value="{{ $event->end_time ? substr($event->end_time, 0, 5) : '' }}" min="{{ substr($event->start_time, 0, 5) }}">
                     </label>
                 </div>
 
                 <label for="event-notes-{{ $event->id }}">Apontamentos</label>
                 <textarea id="event-notes-{{ $event->id }}" name="notes" placeholder="Pequenos detalhes">{{ $event->notes }}</textarea>
-
-                <label class="reminder-toggle-row">
-                    <input class="reminder-toggle" name="reminder_enabled" type="checkbox" value="1" @checked($event->reminder_enabled)>
-                    Enviar um lembrete por email mais tarde
-                </label>
-
-                <div class="reminder-time-field">
-                    <label for="event-reminder-time-{{ $event->id }}">Hora do lembrete</label>
-                    <input id="event-reminder-time-{{ $event->id }}" name="reminder_time" type="time" value="{{ $event->reminder_time ? substr($event->reminder_time, 0, 5) : '' }}">
-                </div>
 
                 <button type="submit">Guardar evento</button>
             </form>
@@ -309,6 +286,31 @@
 
                 window.location.href = hourLine.dataset.openEventUrl;
             });
+        });
+
+        // Help the user choose a logical time before the form even reaches Laravel.
+        // Laravel still checks this again in CalendarController, so the database stays protected.
+        document.querySelectorAll('.event-form').forEach(function (form) {
+            const startInput = form.querySelector('input[name="start_time"]');
+            const endInput = form.querySelector('input[name="end_time"]');
+
+            if (! startInput || ! endInput) {
+                return;
+            }
+
+            function checkEndTime() {
+                endInput.min = startInput.value;
+
+                if (endInput.value && endInput.value <= startInput.value) {
+                    endInput.setCustomValidity('A hora de fim tem de ser depois da hora de início.');
+                } else {
+                    endInput.setCustomValidity('');
+                }
+            }
+
+            startInput.addEventListener('input', checkEndTime);
+            endInput.addEventListener('input', checkEndTime);
+            checkEndTime();
         });
     </script>
 @endsection

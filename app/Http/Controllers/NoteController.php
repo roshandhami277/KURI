@@ -133,6 +133,12 @@ class NoteController extends Controller
             'tag' => ['nullable', Rule::in(['study', 'personal', 'important'])],
             'description' => ['nullable', 'string', 'max:180'],
             'body' => ['nullable', 'string'],
+        ], [
+            'title.required' => 'Escreve um título para o apontamento.',
+            'title.max' => 'O título do apontamento é demasiado grande.',
+            'subject_id.in' => 'Só podes escolher disciplinas do teu curso.',
+            'tag.in' => 'Escolhe uma etiqueta válida.',
+            'description.max' => 'A descrição é demasiado grande.',
         ]);
 
         // A subject only makes sense for study notes.

@@ -31,8 +31,12 @@ class GradeController extends Controller
             $recentSubjectId = 'all';
         }
 
+        $allowedSubjectIds = $subjects->pluck('id')->all();
+
         $recentGrades = $user->grades()
             ->with('subject')
+            // Even if a user tries to change the URL, only subjects from their course are shown.
+            ->whereIn('subject_id', $allowedSubjectIds)
             ->latest('grade_date')
             ->latest()
             ->get();
@@ -110,6 +114,14 @@ class GradeController extends Controller
             'grade' => ['required', 'numeric', 'min:0', 'max:20'],
             'grade_date' => ['nullable', 'date'],
             'notes' => ['nullable', 'string', 'max:500'],
+        ], [
+            'subject_id.required' => 'Escolhe uma disciplina.',
+            'subject_id.in' => 'Só podes adicionar notas a disciplinas do teu curso.',
+            'grade.required' => 'Escreve a nota que recebeste.',
+            'grade.numeric' => 'A nota tem de ser um número.',
+            'grade.min' => 'A nota não pode ser menor que 0.',
+            'grade.max' => 'A nota não pode ser maior que 20.',
+            'grade_date.date' => 'Escolhe uma data válida.',
         ]);
     }
 

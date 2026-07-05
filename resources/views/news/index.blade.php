@@ -103,7 +103,7 @@
                     <span class="material-symbols-outlined">image</span>
                     Adicionar foto
                 </label>
-                <input id="news-image" name="image" type="file" accept="image/*">
+                <input id="news-image" name="image" type="file" accept=".jpg,.jpeg,.png,.webp,.gif">
 
                 <button type="submit">Publicar</button>
             </form>
@@ -132,7 +132,7 @@
                         <span class="material-symbols-outlined">image</span>
                         Substituir foto
                     </label>
-                    <input id="news-image-{{ $post->id }}" name="image" type="file" accept="image/*">
+                    <input id="news-image-{{ $post->id }}" name="image" type="file" accept=".jpg,.jpeg,.png,.webp,.gif">
 
                     <button type="submit">Guardar</button>
                 </form>

@@ -15,7 +15,7 @@ class DailyTaskController extends Controller
     {
         // Read the selected date from the URL, for example /tasks?date=2026-06-25.
         // If there is no date in the URL, use today's date.
-        $selectedDate = Carbon::parse($request->query('date', today()->toDateString()));
+        $selectedDate = $this->dateFromQuery($request->query('date'), today());
 
         return view('tasks.index', [
             'selectedDate' => $selectedDate,
@@ -38,6 +38,11 @@ class DailyTaskController extends Controller
         $validated = $request->validate([
             'title' => ['required', 'string', 'max:200'],
             'task_date' => ['required', 'date'],
+        ], [
+            'title.required' => 'Escreve uma tarefa antes de guardar.',
+            'title.max' => 'A tarefa é demasiado grande.',
+            'task_date.required' => 'Escolhe uma data para a tarefa.',
+            'task_date.date' => 'Escolhe uma data válida.',
         ]);
 
         // Create a row in daily_tasks.
@@ -80,6 +85,9 @@ class DailyTaskController extends Controller
         // Only the task title can be edited from this page.
         $validated = $request->validate([
             'title' => ['required', 'string', 'max:200'],
+        ], [
+            'title.required' => 'A tarefa não pode ficar vazia.',
+            'title.max' => 'A tarefa é demasiado grande.',
         ]);
 
         // Save the new title in the daily_tasks table.
@@ -100,5 +108,18 @@ class DailyTaskController extends Controller
 
         // noContent means the delete worked, but we do not need to send page HTML back.
         return response()->noContent();
+    }
+
+    private function dateFromQuery(mixed $date, Carbon $fallback): Carbon
+    {
+        if (! is_string($date)) {
+            return $fallback;
+        }
+
+        try {
+            return $date !== '' ? Carbon::parse($date) : $fallback;
+        } catch (\Throwable) {
+            return $fallback;
+        }
     }
 }

@@ -20,6 +20,11 @@ class SettingsController extends Controller
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:100'],
             'password' => ['nullable', 'string', 'min:8', 'confirmed'],
+        ], [
+            'name.required' => 'Escreve o teu nome.',
+            'name.max' => 'O nome é demasiado grande.',
+            'password.min' => 'A nova palavra-passe tem de ter pelo menos 8 caracteres.',
+            'password.confirmed' => 'A confirmação da palavra-passe não corresponde.',
         ]);
 
         $data = [

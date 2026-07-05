@@ -48,7 +48,7 @@ class RegisterController extends Controller
                 // \.    real dot
                 // /i    ignore uppercase/lowercase
             ],
-            'password' => ['required', 'confirmed', 'min:5'],
+            'password' => ['required', 'confirmed', 'min:8'],
             'course_id' => [
                 'required',
                 Rule::exists('courses', 'id')->where('is_active', true),
@@ -58,9 +58,18 @@ class RegisterController extends Controller
                 Rule::exists('school_classes', 'id')->where('is_active', true),
             ],
         ], [
-            'email.regex' => 'Please use your correct school email.',
-            'course_id.required' => 'Choose the course you belong to.',
-            'school_class_id.required' => 'Choose your class or DT group.',
+            'name.required' => 'Escreve o teu nome.',
+            'email.required' => 'Escreve o teu email escolar.',
+            'email.email' => 'Escreve um email válido.',
+            'email.unique' => 'Já existe uma conta com este email.',
+            'email.regex' => 'Usa o teu email escolar correto.',
+            'password.required' => 'Escreve uma palavra-passe.',
+            'password.confirmed' => 'As palavras-passe não correspondem.',
+            'password.min' => 'A palavra-passe tem de ter pelo menos 8 caracteres.',
+            'course_id.required' => 'Escolhe o curso a que pertences.',
+            'course_id.exists' => 'Escolhe um curso válido.',
+            'school_class_id.required' => 'Escolhe a tua turma ou grupo de DT.',
+            'school_class_id.exists' => 'Escolhe uma turma válida.',
         ]);
 
         // Students are detected by @alunos.ael.edu.pt.

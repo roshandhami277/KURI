@@ -10,6 +10,8 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
+use Illuminate\Validation\Rule;
+use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
 
 class ChatController extends Controller
@@ -64,9 +66,17 @@ class ChatController extends Controller
     {
         $validated = $request->validate([
             'body' => ['nullable', 'required_without:attachment', 'string', 'max:1000'],
-            'attachment' => ['nullable', 'file', 'max:5120'],
+            'attachment' => ['nullable', 'file', 'max:5120', 'mimes:jpg,jpeg,png,webp,gif,pdf,doc,docx,ppt,pptx,xls,xlsx,txt'],
             'chat_group_id' => ['nullable', 'exists:chat_groups,id'],
             'course_id' => ['nullable', 'exists:courses,id'],
+        ], [
+            'body.required_without' => 'Escreve uma mensagem ou escolhe um ficheiro.',
+            'body.max' => 'A mensagem é demasiado grande.',
+            'attachment.file' => 'O anexo tem de ser um ficheiro válido.',
+            'attachment.max' => 'O ficheiro pode ter no máximo 5 MB.',
+            'attachment.mimes' => 'Só podes enviar imagens, PDF, Word, PowerPoint, Excel ou texto.',
+            'chat_group_id.exists' => 'Esse grupo já não existe.',
+            'course_id.exists' => 'Esse curso já não existe.',
         ]);
 
         $messageData = [
@@ -106,7 +116,16 @@ class ChatController extends Controller
     public function storeGroup(Request $request): RedirectResponse
     {
         $validated = $request->validate([
-            'name' => ['required', 'string', 'max:80'],
+            'name' => [
+                'required',
+                'string',
+                'max:80',
+                Rule::unique('chat_groups', 'name')->where('teacher_id', $request->user()->id),
+            ],
+        ], [
+            'name.required' => 'Escreve o nome do grupo.',
+            'name.max' => 'O nome do grupo é demasiado grande.',
+            'name.unique' => 'Já tens um grupo com esse nome.',
         ]);
 
         $group = ChatGroup::create([
@@ -122,7 +141,18 @@ class ChatController extends Controller
         $this->makeSureUserOwnsGroup($request, $group);
 
         $validated = $request->validate([
-            'name' => ['required', 'string', 'max:80'],
+            'name' => [
+                'required',
+                'string',
+                'max:80',
+                Rule::unique('chat_groups', 'name')
+                    ->where('teacher_id', $group->teacher_id)
+                    ->ignore($group->id),
+            ],
+        ], [
+            'name.required' => 'Escreve o nome do grupo.',
+            'name.max' => 'O nome do grupo é demasiado grande.',
+            'name.unique' => 'Já existe um grupo com esse nome.',
         ]);
 
         $group->update([
@@ -153,11 +183,19 @@ class ChatController extends Controller
 
         $validated = $request->validate([
             'email' => ['required', 'email', 'exists:users,email'],
+        ], [
+            'email.required' => 'Escolhe o email de um aluno.',
+            'email.email' => 'Escolhe um email válido.',
+            'email.exists' => 'Não existe nenhum utilizador com esse email.',
         ]);
 
         $student = User::where('email', $validated['email'])->firstOrFail();
 
-        abort_unless($student->isStudent(), 422);
+        if (! $student->isStudent()) {
+            throw ValidationException::withMessages([
+                'email' => 'Só podes adicionar alunos a este grupo.',
+            ]);
+        }
 
         $group->members()->syncWithoutDetaching($student->id);
 
@@ -170,6 +208,9 @@ class ChatController extends Controller
 
         $validated = $request->validate([
             'body' => ['required', 'string', 'max:1000'],
+        ], [
+            'body.required' => 'A mensagem não pode ficar vazia.',
+            'body.max' => 'A mensagem é demasiado grande.',
         ]);
 
         // Updating the body also changes updated_at, so the view can show "edited at".

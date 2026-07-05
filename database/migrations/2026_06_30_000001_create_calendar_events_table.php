@@ -25,11 +25,6 @@ return new class extends Migration
             $table->time('end_time')->nullable();
             // notes are optional extra details.
             $table->text('notes')->nullable();
-            // This only stores whether the student wants an email reminder.
-            // The actual email sending will be built later.
-            $table->boolean('reminder_enabled')->default(false);
-            // This stores the time the student wants to be reminded.
-            $table->time('reminder_time')->nullable();
             $table->timestamps();
         });
     }

@@ -18,14 +18,26 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        foreach (['Ciências e Tecnologias', 'Ciências Sócio-Económicas', 'Gestão Desportiva', 
-        'Interprete/Ator/Atriz', 'Línguas e Humanidades',
-        'Turismo', 'Operações Turísticas', 'Gestão Prog. Sist. Informáticos',
-        'Auxiliar de Saúde', 'Sistemas', 'Artes Visuais', 'Indústrias Alimentares e Análise Laboratorial'] as $courseName) {
+        $courseNames = [
+            'Ciências e Tecnologias',
+            'Ciências Sócio-Económicas',
+            'Gestão Desportiva',
+            'Interprete/Ator/Atriz',
+            'Línguas e Humanidades',
+            'Turismo',
+            'Operações Turísticas',
+            'Gestão Prog. Sist. Informáticos',
+            'Auxiliar de Saúde',
+            'Sistemas',
+            'Artes Visuais',
+            'Indústrias Alimentares e Análise Laboratorial',
+        ];
+
+        foreach (array_unique($courseNames) as $courseName) {
             Course::firstOrCreate(['name' => $courseName], ['is_active' => true]);
         }
 
-        foreach ([
+        $schoolClasses = [
             ['name' => '1.11', 'grade_level' => 10],
             ['name' => '1.12TT', 'grade_level' => 10],
             ['name' => '1.12OT', 'grade_level' => 10],
@@ -69,7 +81,9 @@ class DatabaseSeeder extends Seeder
             ['name' => '12.6', 'grade_level' => 12],
             ['name' => '12.7', 'grade_level' => 12],
 
-        ] as $class) {
+        ];
+
+        foreach (collect($schoolClasses)->unique('name') as $class) {
             SchoolClass::firstOrCreate(['name' => $class['name']], [
                 'grade_level' => $class['grade_level'],
                 'is_active' => true,
@@ -229,7 +243,7 @@ class DatabaseSeeder extends Seeder
         foreach ($courseSubjects as $courseName => $subjectNames) {
             $course = Course::firstOrCreate(['name' => $courseName], ['is_active' => true]);
 
-            foreach ($subjectNames as $subjectName) {
+            foreach (array_unique($subjectNames) as $subjectName) {
                 $subject = Subject::firstOrCreate(['name' => $subjectName], ['is_active' => true]);
 
                 $course->subjects()->syncWithoutDetaching($subject->id);

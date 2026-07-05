@@ -253,7 +253,7 @@
                     <label class="chat-plain-icon" for="chat-attachment">
                         <span class="material-symbols-outlined">attach_file</span>
                     </label>
-                    <input id="chat-attachment" name="attachment" type="file" hidden>
+                    <input id="chat-attachment" name="attachment" type="file" accept=".jpg,.jpeg,.png,.webp,.gif,.pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.txt" hidden>
                     <span class="chat-file-name" id="chat-file-name"></span>
 
                     <button type="submit">

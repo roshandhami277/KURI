@@ -6,6 +6,8 @@ use App\Models\CalendarEvent;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
+use Illuminate\Validation\Rule;
+use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
 
 class CalendarController extends Controller
@@ -14,11 +16,11 @@ class CalendarController extends Controller
     {
         // The selected date is the day the user clicked.
         // If the URL does not have a date, we use today's date.
-        $selectedDate = Carbon::parse($request->query('date', today()->toDateString()));
+        $selectedDate = $this->dateFromQuery($request->query('date'), today());
 
         // The month is the month currently shown in the big calendar.
         // Example: if month=2026-06, this becomes 2026-06-01.
-        $month = Carbon::parse($request->query('month', $selectedDate->format('Y-m')).'-01');
+        $month = $this->monthFromQuery($request->query('month'), $selectedDate);
 
         // Get all events for the logged-in user for this visible month.
         // This keeps the calendar private because it starts from $request->user().
@@ -113,21 +115,30 @@ class CalendarController extends Controller
         // These names match the name="" attributes in the Blade form.
         $validated = $request->validate([
             'title' => ['required', 'string', 'max:120'],
-            'type' => ['required', 'string', 'max:40'],
+            'type' => ['required', Rule::in(['Homework', 'Test', 'Exam', 'Presentation', 'Other'])],
             'event_date' => ['required', 'date'],
             'start_time' => ['required', 'date_format:H:i'],
-            'end_time' => ['nullable', 'date_format:H:i', 'after:start_time'],
+            'end_time' => ['nullable', 'date_format:H:i'],
             'notes' => ['nullable', 'string', 'max:800'],
-            'reminder_enabled' => ['nullable', 'boolean'],
-            'reminder_time' => ['nullable', 'required_if:reminder_enabled,1', 'date_format:H:i'],
+        ], [
+            'title.required' => 'Escreve um título para o evento.',
+            'title.max' => 'O título do evento é demasiado grande.',
+            'type.required' => 'Escolhe o tipo de evento.',
+            'type.in' => 'Escolhe um tipo de evento válido.',
+            'event_date.required' => 'Escolhe uma data para o evento.',
+            'event_date.date' => 'Escolhe uma data válida.',
+            'start_time.required' => 'Escolhe a hora de início.',
+            'start_time.date_format' => 'Escolhe uma hora de início válida.',
+            'end_time.date_format' => 'Escolhe uma hora de fim válida.',
+            'notes.max' => 'Os apontamentos do evento são demasiado grandes.',
         ]);
 
-        // A checkbox sends nothing when it is off, so boolean() safely turns that into false.
-        $validated['reminder_enabled'] = $request->boolean('reminder_enabled');
-
-        // If reminder is off, do not store a reminder time.
-        if (! $validated['reminder_enabled']) {
-            $validated['reminder_time'] = null;
+        // A school event cannot finish before it starts.
+        // It also should not finish at the exact same minute, because then it has no duration.
+        if (! empty($validated['end_time']) && $validated['end_time'] <= $validated['start_time']) {
+            throw ValidationException::withMessages([
+                'end_time' => 'A hora de fim tem de ser depois da hora de início.',
+            ]);
         }
 
         return $validated;
@@ -140,5 +151,31 @@ class CalendarController extends Controller
             'date' => $date,
             'month' => Carbon::parse($date)->format('Y-m'),
         ]);
+    }
+
+    private function dateFromQuery(mixed $date, Carbon $fallback): Carbon
+    {
+        if (! is_string($date)) {
+            return $fallback;
+        }
+
+        try {
+            return $date !== '' ? Carbon::parse($date) : $fallback;
+        } catch (\Throwable) {
+            return $fallback;
+        }
+    }
+
+    private function monthFromQuery(mixed $month, Carbon $fallback): Carbon
+    {
+        if (! is_string($month)) {
+            return $fallback->copy()->startOfMonth();
+        }
+
+        try {
+            return $month !== '' ? Carbon::parse($month.'-01') : $fallback->copy()->startOfMonth();
+        } catch (\Throwable) {
+            return $fallback->copy()->startOfMonth();
+        }
     }
 }

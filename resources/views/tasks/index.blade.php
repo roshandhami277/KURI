@@ -36,6 +36,8 @@
                 <span data-task-counter>{{ $completedTasks }}/{{ $totalTasks }}</span>
             </div>
 
+            <p class="task-error-message" data-task-error hidden></p>
+
             {{-- $tasks comes from DailyTaskController@index. Each task is one row from daily_tasks. --}}
             <div class="todo-lines" data-task-list>
                 @foreach ($tasks as $task)
@@ -97,10 +99,39 @@
         const taskCounter = document.querySelector('[data-task-counter]');
         const progressBox = document.querySelector('[data-progress-box]');
         const progressNumber = document.querySelector('[data-progress-number]');
+        const taskError = document.querySelector('[data-task-error]');
 
         // Laravel needs this token for POST/PATCH/DELETE requests.
         // It proves the request came from our own page.
         const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
+
+        function showTaskError(message) {
+            taskError.textContent = message;
+            taskError.hidden = false;
+        }
+
+        function clearTaskError() {
+            taskError.textContent = '';
+            taskError.hidden = true;
+        }
+
+        function readValidationMessage(response) {
+            return response.json().then(function (data) {
+                if (data.message) {
+                    return data.message;
+                }
+
+                if (data.errors) {
+                    const firstField = Object.keys(data.errors)[0];
+
+                    if (firstField && data.errors[firstField][0]) {
+                        return data.errors[firstField][0];
+                    }
+                }
+
+                return 'Não foi possível guardar a tarefa.';
+            });
+        }
 
         function updateDailyProgress() {
             // Count all saved task lines currently visible on the page.
@@ -168,6 +199,8 @@
                 return;
             }
 
+            clearTaskError();
+
             // Send PATCH to DailyTaskController@update.
             fetch(line.dataset.updateUrl, {
                 method: 'PATCH',
@@ -179,6 +212,10 @@
                 body: JSON.stringify({
                     title: title,
                 }),
+            }).then(function (response) {
+                if (! response.ok) {
+                    return readValidationMessage(response).then(showTaskError);
+                }
             });
         }
 
@@ -212,11 +249,23 @@
                 }),
             })
                 .then(function (response) {
+                    if (! response.ok) {
+                        return readValidationMessage(response).then(function (message) {
+                            showTaskError(message);
+                            return null;
+                        });
+                    }
+
                     // The controller returns JSON with the new task and its URLs.
                     return response.json();
                 })
                 .then(function (task) {
+                    if (! task) {
+                        return;
+                    }
+
                     // Show the new saved task on the page.
+                    clearTaskError();
                     createTaskLine(task);
                     newTaskInput.value = '';
                 });

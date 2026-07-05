@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-#[Fillable(['user_id', 'title', 'type', 'event_date', 'start_time', 'end_time', 'notes', 'reminder_enabled', 'reminder_time'])]
+#[Fillable(['user_id', 'title', 'type', 'event_date', 'start_time', 'end_time', 'notes'])]
 class CalendarEvent extends Model
 {
     public function user(): BelongsTo
@@ -21,8 +21,6 @@ class CalendarEvent extends Model
         return [
             // This lets us use date functions like format() on event_date.
             'event_date' => 'date',
-            // This lets Laravel treat reminder_enabled as true/false.
-            'reminder_enabled' => 'boolean',
         ];
     }
 }

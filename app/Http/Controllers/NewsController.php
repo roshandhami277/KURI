@@ -24,7 +24,14 @@ class NewsController extends Controller
         $validated = $request->validate([
             'title' => ['required', 'string', 'max:120'],
             'body' => ['nullable', 'string', 'max:3000'],
-            'image' => ['nullable', 'image', 'max:5120'],
+            'image' => ['nullable', 'image', 'max:5120', 'mimes:jpg,jpeg,png,webp,gif'],
+        ], [
+            'title.required' => 'Escreve um título para a notícia.',
+            'title.max' => 'O título da notícia é demasiado grande.',
+            'body.max' => 'O texto da notícia é demasiado grande.',
+            'image.image' => 'A foto tem de ser uma imagem.',
+            'image.max' => 'A foto pode ter no máximo 5 MB.',
+            'image.mimes' => 'A foto tem de ser JPG, PNG, WEBP ou GIF.',
         ]);
 
         $postData = [
@@ -45,12 +52,23 @@ class NewsController extends Controller
     public function update(Request $request, NewsPost $post): RedirectResponse
     {
         // Admins can edit any post. Teachers can edit only posts they wrote.
-        abort_unless($request->user()->isAdmin() || $post->author_id === $request->user()->id, 403);
+        abort_unless(
+            $request->user()->isAdmin()
+            || ($request->user()->isTeacher() && $post->author_id === $request->user()->id),
+            403
+        );
 
         $validated = $request->validate([
             'title' => ['required', 'string', 'max:120'],
             'body' => ['nullable', 'string', 'max:3000'],
-            'image' => ['nullable', 'image', 'max:5120'],
+            'image' => ['nullable', 'image', 'max:5120', 'mimes:jpg,jpeg,png,webp,gif'],
+        ], [
+            'title.required' => 'Escreve um título para a notícia.',
+            'title.max' => 'O título da notícia é demasiado grande.',
+            'body.max' => 'O texto da notícia é demasiado grande.',
+            'image.image' => 'A foto tem de ser uma imagem.',
+            'image.max' => 'A foto pode ter no máximo 5 MB.',
+            'image.mimes' => 'A foto tem de ser JPG, PNG, WEBP ou GIF.',
         ]);
 
         $postData = [
@@ -74,7 +92,11 @@ class NewsController extends Controller
     public function destroy(Request $request, NewsPost $post): RedirectResponse
     {
         // Admins can delete any post. Teachers can delete only posts they wrote.
-        abort_unless($request->user()->isAdmin() || $post->author_id === $request->user()->id, 403);
+        abort_unless(
+            $request->user()->isAdmin()
+            || ($request->user()->isTeacher() && $post->author_id === $request->user()->id),
+            403
+        );
 
         if ($post->image_path) {
             File::delete(public_path($post->image_path));
