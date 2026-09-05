@@ -1,58 +1,78 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# KURI
+
+KURI is a web-based school platform that brings common student and teacher tools into one application. It was developed as my final-year project (PAP) during my TGPSI vocational secondary education in Portugal.
+
+<table>
+  <tr>
+    <td><img src="screenshots/homepage.png" width="500"></td>
+    <td><img src="screenshots/mobile_view.png" width="200"></td>
+  </tr>
+</table>
+
+## Features
+
+- User registration and authentication
+- Student and teacher accounts
+- Personal dashboard
+- Calendar
+- Daily tasks
+- Notes
+- Grades and evaluations
+- Courses and subjects
+- Groups and chat
+- School news
+- File uploads
+- User settings
+- Access control and validation
+
+<table>
+  <tr>
+    <td><img src="screenshots/chat.png" width="300"></td>
+    <td><img src="screenshots/news.png" width="300"></td>
+    <td><img src="screenshots/notes.png" width="300"></td>
+  </tr>
+</table>
+
+## Technologies
+
+- PHP
+- Laravel
+- MySQL
+- JavaScript
+- HTML
+- CSS
+- Bootstrap
+
+## Architecture
+
+KURI was developed using the Laravel MVC (Model-View-Controller) architecture.
+
+- **Models** handle interaction with the database.
+- **Controllers** handle application logic and requests.
+- **Blade views** handle the user interface.
+- **Routes** define how requests are directed through the application.
 
 <p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
+  <img src="screenshots/route-list.png" width="300">
 </p>
 
-## About Laravel
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## Database
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+The application uses MySQL as its relational database. It includes tables for users, courses, subjects, tasks, notes, evaluations, calendar events, groups, chat messages, and news.
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+Laravel migrations were used to create and manage the database structure.
 
-## Learning Laravel
+<p align="center">
+  <img src="screenshots/dbdiagram.png" width="300">
+</p>
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+## Authentication & Security
 
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+The application includes validation and access-control rules to help protect user data and ensure proper access.
 
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
+The project also includes rules to prevent users from accessing or modifying data belonging to other users, as well as validation for forms, file uploads, and database entries.
 
-## Agentic Development
+## Documentation
 
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
-
-```bash
-composer require laravel/boost --dev
-
-php artisan boost:install
-```
-
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
-
-## Contributing
-
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
-
-## Code of Conduct
-
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
-
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
-
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+A detailed 81 pages project report was created as part of the final-year project. It documents the project's requirements, architecture, database design, implementation, security, testing, problems encountered, and solutions.
